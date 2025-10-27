@@ -1,0 +1,22 @@
+body {
+	color: #EEE;
+	background-color: #111;
+}
+
+nav a:link { color: lightskyblue; }
+nav a:visited { color: lightskyblue; }
+nav {
+    border-top: 1px dotted #AAA;
+    padding-top: .75rem;
+}
+
+textarea {
+	width: 100%;
+}
+.imgs img {
+	border: 1px solid #AAA;
+}
+
+.fname {
+	color: #e1e1e1;
+}
