@@ -1,30 +1,5 @@
 <?php
-//define('CFGFILE','config.json');
-//define('IBASE','media/');
-
-//session_name('mmg'.substr(sha1($gbase), -30));
-//session_start();
-//$isLogged = isset($_SESSION['logged']);
-
-/*
-$cfg = (object) [
-	'thms' => (object) ['w'=>240,'h'=>180, 'q'=>90],
-	'flds' => (object) ['w'=>128,'h'=>128],
-	'css' => 'dark',
-	'title' => 'My Media Gallery'
-	];
-if (file_exists($gbase.CFGFILE)) {									//	<<<< @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-	$cfg = json_decode(file_get_contents($gbase.CFGFILE));
-} else {
-	//file_put_contents(CFGFILE, json_encode($cfg, JSON_PRETTY_PRINT));
-}
-*/
-
-
-
-
-
-
+$ssdly = empty($cfg->ssdly) ? 6000 : (int)($cfg->ssdly*1000);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -32,11 +7,12 @@ if (file_exists($gbase.CFGFILE)) {									//	<<<< @@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?=$cfg->title?></title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css">
 <style>
 nav {font-size:larger;}
 nav img {vertical-align:text-bottom;}
 nav i {font-size: medium; margin-top: 4px; float: right}
+gver {display: none}
 .folds, .imgs {
 	clear:both;
 	margin-top:1rem;
@@ -81,7 +57,6 @@ nav i {font-size: medium; margin-top: 4px; float: right}
 }
 .dlgElems {
 	display: grid;
-	padding-right: .5rem;
 }
 .mbox {
 	float:left;
@@ -110,12 +85,12 @@ nav i {font-size: medium; margin-top: 4px; float: right}
 	background-color: transparent;
 }
 </style>
-<link rel="stylesheet" href="/galbase/css/<?=$cfg->css?>.css">
+<link rel="stylesheet" href="<?=$base?>/css/<?=$cfg->css?>.css">
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script> -->
 <?=$hdinc?>
-<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
-<script src="/galbase/js/echo.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js"></script>
+<script src="<?=$base?>/js/echo.min.js"></script>
 <script>
 const mmg_cdir = "<?=$cdir?>";
 const h5uOptions = {upURL:'<?=$upURL?>', payload:{imgdir:mmg_cdir}, maxFilesize:0, maxchunksize:<?=$phpmxu-2048?>, doneFunc:(okC, errC, msgC) => uploadDone(okC, errC, msgC)};
@@ -133,9 +108,15 @@ function backc (colr) {
 		}
 	}
 }
+<?php
+if (isset($headScript) && $headScript) {
+	echo implode("\n", $headScript);
+}
+?>
 </script>
 </head>
 <body>
+<gver>1</gver>
 <?php echo '<header><h2>'.$cfg->title.'</h2>'.(empty($acmds)?'':$acmds).'</header>'; ?>
 <?php echo '<nav>'.(empty($nav)?'':$nav).'</nav>'; ?>
 <?php echo '<section>'.(empty($content)?'':$content).'</section>'; ?>
@@ -143,22 +124,23 @@ function backc (colr) {
 <?php //echo $html; ?>
 <?php //echo'<xmp>';var_dump($GLOBALS);echo'</xmp>'; ?>
 <script>
-	Fancybox.bind("[data-fancybox]", {
-		// Your custom options
-		Thumbs: false,
-		Toolbar: {
-			display: {
-				left: ["infobar"],
-				middle: [],
-				right: ["slideshow", "fullscreen", "download", "close"]
-			}
+Fancybox.bind("[data-fancybox]", {
+	// Your custom options
+	Slideshow: {timeout: <?=$ssdly?>},
+	Thumbs: false,
+	Toolbar: {
+		display: {
+			left: ["infobar"],
+			middle: [],
+			right: ["slideshow", "fullscreen", "download", "close"]
 		}
-	});
-	echo.init({
-		offset: 200,
-		throttle: 250,
-		debounce: false
-	});
+	}
+});
+echo.init({
+	offset: 200,
+	throttle: 250,
+	debounce: false
+});
 </script>
 </body>
 </html>

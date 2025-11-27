@@ -4,12 +4,25 @@ if (isset($_GET['act'])) {
 	header('Access-Control-Allow-Origin: *');
 	switch ($_GET['act']) {
 	case 'plist':
-		getPlayList($_GET['fld']);
+		getPlayList($_GET['fld'], false, isset($_GET['pco']));
 		break;
 	case 'thms':
 		getPlayList($_GET['fld'], true);
 		break;
 	case 'getimg':
+//		if (!defined('PFDW')) {
+//			define('PFDW', 1280);
+//			define('PFDH', 800);
+//			define('IMGBKG', 'bgi3.jpeg');
+//		}
+		if (isset($_GET['dim'])) {
+			list($iw,$ih) = explode('.', $_GET['dim']);
+			require 'classes/frameimg.php';
+			$imgp = new FrameImage();
+			header('Content-Type: image/jpeg; charset=utf-8',true);
+			$imgp->makeFimg($gbases.IBASE.$_GET['img']);
+			break;
+		}
 		sendImage($_GET['img']);
 		break;
 	default:
@@ -18,11 +31,11 @@ if (isset($_GET['act'])) {
 	exit();
 }
 
-function getPlayList ($fld, $thms=false)
+function getPlayList ($fld, $thms=false, $pco=false)
 {
 	global $gbases;
 
-	$pics = [];
+	$pics = $pco ? 0 : [];
 
 	$prot = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 	$uri = strtok($_SERVER['REQUEST_URI'], '?');
@@ -37,16 +50,24 @@ function getPlayList ($fld, $thms=false)
 				if ($thms) {
 					echo '<img class="pfthm" src="'.$plk.urlencode($fld.'.thm/'.$file).'">';
 				} else {
-					$pics[] = $plk.urlencode($fld.$file);	//."\n";	//json_encode($fp2d.$file);
+					if ($pco) {
+						$pics++;
+					} else {
+						$pics[] = $plk.urlencode($fld.$file).'&dim='.(isset($_GET['ddim']) ? $_GET['ddim'] : '1200.600');	//."\n";	//json_encode($fp2d.$file);
+					}
 				}
 			}
 		}
 		closedir($handle); 
 	}
+	if ($pco) {
+		echo $pics;
+		return;
+	}
 	if (!$thms) echo "\t\t\t\t" . count($pics) . "\t" . implode("\n",$pics);
 }
 
-function sendImage ($img, $thm=false)
+function sendImage ($img)
 {
 	global $gbases;
 

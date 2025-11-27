@@ -1,5 +1,8 @@
 var mmg_win_reload = false;
 var mmg_deleting = false;
+var acDlg = document.getElementById('acDlg');
+var acDlgCB = null;
+acDlg.addEventListener('close', (e)=>acDlgCB(e));
 
 function askNewF () {
 	let dlg = document.getElementById('newFdlg');
@@ -25,7 +28,7 @@ function uploadDone (okC, errC, msgC) {
 function newFreq (evt,elm) {
 	console.log(evt,elm,elm.newFnam.value);
 	//evt.preventDefault();
-	let fnam = elm.newFnam.value.trim().replace('/','_');
+	let fnam = elm.newFnam.value.trim().replaceAll('/','_');
 	if (fnam) {
 		parms = new URLSearchParams('newf='+mmg_cdir+fnam);
 		fetch('admin.php', {method:'POST',body:parms})
@@ -51,7 +54,7 @@ function delToggle (elm) {
 		elm.dataset.delm = 1;
 		isrc = 'deleter.svg';
 	}
-	elm.src = '/galbase/css/'+isrc;
+	elm.src = appB+'/css/'+isrc;
 }
 
 function setDelete (elm) {
@@ -78,14 +81,20 @@ function setDelete (elm) {
 		return;
 	}
 
-	if (confirm('Select items to delete then click the "Delete" button again')) {
+	if (pItems < 1) {
+		doAcDlg('There need to be some items to delete');
+		return;
+	}
+
+	doAcDlg('Select items to delete then click the "Delete" button again', true, (evt) => {
+		if (evt.target.returnValue != 'okay') return;
 		mmg_deleting = true;
 		elm.style.backgroundColor = '#F66';
 		const boxes = document.querySelectorAll('.delbox');
 		boxes.forEach(box => {
 			box.style.display = 'block';
 		});
-	}
+	});
 }
 
 function doCfg () {
@@ -150,6 +159,15 @@ function saveFold (evt,elm) {
 function dlgClose (btn) {
 	btn.closest('dialog').close();
 }
+
+function doAcDlg (msg, conf=false, cb=()=>{}) {
+	acDlg.className = conf ? 'conf' : 'alrt';
+	acDlg.querySelector('div').innerHTML = msg;
+	acDlgCB = cb;
+	acDlg.showModal();
+}
+
+
 
 /* uplodr v0.9 */
 

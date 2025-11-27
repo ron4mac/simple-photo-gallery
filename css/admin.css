@@ -3,6 +3,7 @@ body {
 }
 
 dialog {
+	margin-top: 10rem;
 	border-radius: 5px;
 }
 
@@ -11,12 +12,11 @@ dialog {
 	top: 1rem;
 	right: 1rem;
 }
-.dbuts {
+.dbutts {
+	display: flex;
+	justify-content: end;
 	margin-top: 1rem;
-}
-.dbuts input {
-	float: right;
-	margin-left: .5rem;
+	gap: .5rem;
 }
 ::backdrop {
 	background-color: #222;
@@ -44,9 +44,6 @@ dialog {
 	right: 0;
 	cursor: pointer;
 }
-#newFdlg, #cfgDlg, #foldDlg {
-	margin-top: 10rem;
-}
 #uplddlg {
 	min-width: 320px;
 	position: absolute;
@@ -58,13 +55,17 @@ dialog {
 	min-width: 320px;
 }
 #cfgElms {
-	line-height: 2rem;
+	line-height: 1.5rem;
 }
 #cfgElms fieldset {
 	border-width: 1px;
 }
 #cfgElms input[type="text"] {
 	min-width: 200px;
+}
+
+.alrt .canbut {
+	display: none;
 }
 
 /* uplodr v0.8 */

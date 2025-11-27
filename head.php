@@ -8,6 +8,7 @@ $isLogged = isset($_SESSION['logged']);
 
 
 $cfg = (object) [
+	'ssdly' => 6,
 	'thms' => (object) ['w'=>240,'h'=>180, 'q'=>90],
 	'flds' => (object) ['w'=>128,'h'=>128],
 	'css' => 'dark',

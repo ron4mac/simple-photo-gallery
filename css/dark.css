@@ -12,6 +12,7 @@ nav {
 
 textarea {
 	width: 100%;
+	box-sizing: border-box;
 }
 .imgs img {
 	border: 1px solid #AAA;

@@ -21,6 +21,7 @@ function sanitizeFilename($filename) {
 
 class Up_Load
 {
+	protected $cfg = [];
 	protected $target_dir;
 	protected $pvals;
 	protected $file;
@@ -91,6 +92,17 @@ class Up_Load
 		$this->target_file = $target_file;
 	}
 
+	private function validImageFile ($fpath)
+	{
+		$mtype = '';
+		if (function_exists('finfo_open') && ($finf = finfo_open(FILEINFO_MIME_TYPE))) {
+			$mtype = finfo_file($finf, $fpath);
+			finfo_close($finf);
+		}
+		$mp = explode('/', $mtype);
+		return (is_array($mp) && $mp[0] == 'image');
+	}
+
 	// normal receipt of a single uploaded file
 	private function receiveFile ()
 	{
@@ -98,7 +110,16 @@ class Up_Load
 		if ($this->pvals->faex=='r') {
 			$this->target_file = $this->uniqueFn($this->target_file);
 		}
-		if (!move_uploaded_file($this->file['tmp_name'], $this->target_file)) throw new Exception('Could not place file');
+		if ($this->cfg->imgs->r && $this->validImageFile($this->file['tmp_name'])) {
+			require 'classes/imgproc.php';
+			$imgp = ImageProc::getImgProc($this->file['tmp_name']);
+			$dz = $imgp->orientImage($this->file['tmp_name']);
+			$sz = $imgp->createMedium($this->target_file, '', $this->cfg->imgs->w, $this->cfg->imgs->h);
+			unlink($this->file['tmp_name']);
+			if (!$sz) throw new Exception('Could not place file');
+		} else {
+			if (!move_uploaded_file($this->file['tmp_name'], $this->target_file)) throw new Exception('Could not place file');
+		}
 		if ($this->filup_cb) call_user_func($this->filup_cb, basename($this->target_file));
 	}
 

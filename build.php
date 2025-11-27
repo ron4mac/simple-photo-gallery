@@ -1,8 +1,9 @@
 <?php
-$msg = '';
 $alert = '';
+$msg = '';
 $ask = 'true';
 if (isset($_POST['galloc'])) {
+	require 'cfgobj.php';
 	while (true) {
 		$ask = 'false';
 		$droot = $_SERVER['DOCUMENT_ROOT'].'/';
@@ -14,14 +15,9 @@ if (isset($_POST['galloc'])) {
 		}
 		mkdir($gbase, 0777, true);
 		$gbase .= '/';
-		$cfg = (object) [
-			'thms' => (object) ['w'=>240,'h'=>180, 'q'=>90],
-			'flds' => (object) ['w'=>128,'h'=>128],
-			'css' => 'dark',
-			'title' => $_POST['galnam'],
-			'desc' => 'A new gallery built with the gallery builder',
-			'auth_users' => (object) [$_POST['admnam']=>password_hash($_POST['admpass'], null)]
-		];
+		$cfgobj->title = $_POST['galnam'];
+		$cfgobj->desc = 'A new gallery built with the gallery builder';
+		$cfgobj->auth_users = (object) [$_POST['admnam']=>password_hash($_POST['admpass'], null)];
 	
 		// figure out this base location relative to root
 		$docr = $_SERVER['DOCUMENT_ROOT'];
@@ -36,7 +32,7 @@ if (isset($_POST['galloc'])) {
 			$rloc = substr(strstr($rloc,$docr), strlen($docr)+1);
 		}
 	
-		file_put_contents($gbase.'config.json', json_encode($cfg, JSON_PRETTY_PRINT));
+		file_put_contents($gbase.'config.json', json_encode($cfgobj, JSON_PRETTY_PRINT));
 		$data = file_get_contents(__FILE__, false, NULL, __COMPILER_HALT_OFFSET__);
 		$ifiles = explode('&&&&',$data);
 		foreach ($ifiles as $f) {
@@ -46,7 +42,7 @@ if (isset($_POST['galloc'])) {
 			file_put_contents($gbase.$fp, $fd);
 		}
 		mkdir($gbase.'media', 0777);
-		$msg .= '<h4><a href="../'.$_POST['galloc'].'/admin">Go there</a></h4>';
+		$msg = '<h4>Gallery Created</h4><a href="../'.$_POST['galloc'].'/admin">Go there</a>';
 		break;
 	}
 }
@@ -69,9 +65,15 @@ body {
 }
 dialog {
 	margin-top: 16rem;
+	border: 1px solid #AAA;
 	border-radius: 5px;
 }
+p {
+	margin-top: 0;
+	font-size: larger;
+}
 form {
+	width: min-content;
 	display: grid;
 	row-gap: .5rem;
 }
@@ -87,23 +89,11 @@ input[type="text"] {
 	margin-left: .5rem;
 }
 </style>
-<script>
-const ask = <?=$ask?>;
-const alrt = "<?=$alert?>";
-//if (alrt) alert(alrt);
-if (ask) {
-	document.addEventListener('DOMContentLoaded', function() {
-		const dlg = document.getElementById('newGdlg');
-		dlg.showModal();
-		if (alrt) setTimeout(alert(alrt), 2500);
-	});
-}
-</script>
 </head>
 <body style="background-color:gray">
-<?=$msg?>
 <dialog id="newGdlg">
 	<form action="" method="POST">
+	<p>Create a small media gallery for adhoc or long term use</p>
 		<label>
 			Gallery Name:<br>
 			<input type="text" class="textin" name="galnam" value="<?=pVal('galnam')?>" required autofocus>
@@ -126,11 +116,37 @@ if (ask) {
 		</div>
 	</form>
 </dialog>
+<dialog id="msgDlg">
+	<div></div><br>
+	<input type="reset" value="Ok" onclick="this.closest('dialog').close()">
+</dialog>
+<script>
+const ask = <?=$ask?>;
+const alrt = "<?=$alert?>";
+const msg = '<?=$msg?>';
+const dmsg = (m) => {
+	const mdlg = document.getElementById('msgDlg');
+	mdlg.querySelector('div').innerHTML = m;
+	mdlg.showModal();
+};
+if (ask) {
+	document.addEventListener('DOMContentLoaded', function() {
+		const dlg = document.getElementById('newGdlg');
+		dlg.showModal();
+		if (alrt) dmsg(alrt);
+		if (msg) dmsg(msg);
+	});
+} else {
+	if (msg) dmsg(msg);
+}
+if (msg) dmsg(msg);
+</script>
 </body>
 </html>
 <?php __halt_compiler()?>
 index.php====<?php
 $droot = $_SERVER['DOCUMENT_ROOT'];
+$base = '/####';
 $gbase = dirname(__FILE__);
 $gbases = $gbase.'/';
 $rqf = empty($_GET['f']) ? 'viewer.php' : 'thumb.php';
@@ -151,8 +167,8 @@ require $droot.'/####/admin.php';
 exit();
 &&&&picframe/index.php====<?php
 $droot = $_SERVER['DOCUMENT_ROOT'];
+$base = '/####';
 $gbase = dirname(dirname(__FILE__));
 $gbases = $gbase.'/';
 define('IBASE','media/');
 require $droot.'/####/picframe.php';
-

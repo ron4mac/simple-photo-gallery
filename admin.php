@@ -43,8 +43,9 @@ defined('ADM') or die('Not authorized');
 define('CFGFILE','config.json');
 define('IBASE', 'media/');
 if (isset($_POST['faex'])) {
+	$cfg = json_decode(file_get_contents(CFGFILE));
 	require 'upload.php';
-	$upld = new Up_Load(['target_dir'=>IBASE.$_POST['imgdir']]);
+	$upld = new Up_Load(['target_dir'=>IBASE.$_POST['imgdir'],'cfg'=>$cfg]);
 	exit();
 }
 if (isset($_POST['newf'])) {
