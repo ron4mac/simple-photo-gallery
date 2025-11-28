@@ -1,4 +1,11 @@
 <?php
+if (!file_exists('build/.auth.php')) {
+	die('No authentication available');
+} else {
+	include 'build/.auth.php';
+	if (empty($_COOKIE[$ckid])) die('Not authenticated');
+}
+
 $alert = '';
 $msg = '';
 $ask = 'true';
