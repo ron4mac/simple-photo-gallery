@@ -1,4 +1,5 @@
 <?php
+$appbase = dirname($_SERVER['REQUEST_URI']).'/';
 if (!file_exists('.auth.php')) {
 	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER']!=$_SERVER['PHP_AUTH_PW']) {
 		header('WWW-Authenticate: Basic realm="Gallery Builder"');
@@ -9,18 +10,18 @@ if (!file_exists('.auth.php')) {
 		//header('HTTP/1.0 401 Unauthorized'); die();
 		$ckid = md5($_SERVER['PHP_AUTH_USER']."\t".$_SERVER['PHP_AUTH_PW']);
 		file_put_contents('.auth.php', '<?php $ckid = "'.$ckid.'"; ?>');
-		setcookie($ckid, 1, 0, '/gallery/');
+		setcookie($ckid, 1, 0, $appbase);
 	}
 } else {
 	include '.auth.php';
 	if (isset($_COOKIE[$ckid])) {
-		header('Location: /gallery/build.php', true, 301);
+		header('Location: '.$appbase.'build.php', true, 301);
 		exit;
 	} elseif (isset($_POST['unam'])) {
 		$ck = md5($_POST['unam']."\t".$_POST['pass']);
 		if ($ck == $ckid) {
-			setcookie($ckid, 1, 0, '/gallery/');
-			header('Location: /gallery/build.php', true, 301);
+			setcookie($ckid, 1, 0, $appbase);
+			header('Location: '.$appbase.'build.php', true, 301);
 			exit;
 		}
 	}
