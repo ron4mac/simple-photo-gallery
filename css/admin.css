@@ -7,6 +7,10 @@ dialog {
 	border-radius: 5px;
 }
 
+span.danger {
+	font-size:larger;
+	color:red
+}
 .acmds {
 	position: absolute;
 	top: 1rem;

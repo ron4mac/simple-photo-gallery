@@ -99,9 +99,6 @@ function setDelete (elm) {
 
 function doCfg () {
 	let dlg = document.getElementById('cfgDlg');
-//	let closeBtn = dlg.querySelector('.cfgClos');
-//	closeBtn.addEventListener('click', () => dlg.close());
-
 	dlg.addEventListener('close', (e) => {
 		//if (mmg_win_reload) window.location.reload(true);
 		console.log(dlg.returnValue);
@@ -129,6 +126,23 @@ function saveCfg (evt,elm) {
 		window.location.reload(true);
 	})
 	.catch(err => alert('Failure: '+err));
+}
+
+function delGalQ () {
+	doAcDlg('<span class="danger">Are you 100% sure that you want to completely delete this gallery?</span>', true, (rsp)=>{
+		console.log(rsp);
+		if (rsp.target.returnValue == 'okay') {
+			let parms = new URLSearchParams('kgal='+'XXXXX');
+			fetch('admin.php', {method:'POST',body:parms})
+			.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
+			.then(data => {
+				console.log(data);
+				if (data) alert('Could not delete the gallery');
+				else window.location = appB;
+			})
+			.catch(err => alert('Failure: '+err));
+		}
+	});
 }
 
 function foldset (foldp) {

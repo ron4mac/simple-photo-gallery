@@ -61,6 +61,10 @@ if (isset($_POST['fold'])) {
 	require 'fold.php';
 	exit();
 }
+if (isset($_POST['kgal']) && $_POST['kgal']==$gbase) {
+	echo delTree($gbase) ? '' : 'x';
+	exit();
+}
 
 if (isset($_GET['delm'])) {
 	$pinput = file_get_contents('php://input');

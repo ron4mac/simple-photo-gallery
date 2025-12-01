@@ -9,6 +9,10 @@ nav {
     border-top: 1px dotted #AAA;
     padding-top: .75rem;
 }
+.acmds .fa-trash {
+	color:yellow;
+	margin-left:.5rem;
+}
 
 textarea {
 	width: 100%;

@@ -1,5 +1,6 @@
 <?php
 $appbase = dirname($_SERVER['REQUEST_URI']).'/';
+$gobuild = true;
 if (!file_exists('.auth.php')) {
 	if (!isset($_SERVER['PHP_AUTH_USER']) || $_SERVER['PHP_AUTH_USER']!=$_SERVER['PHP_AUTH_PW']) {
 		header('WWW-Authenticate: Basic realm="Gallery Builder"');
@@ -14,17 +15,20 @@ if (!file_exists('.auth.php')) {
 	}
 } else {
 	include '.auth.php';
-	if (isset($_COOKIE[$ckid])) {
-		header('Location: '.$appbase.'build.php', true, 301);
-		exit;
-	} elseif (isset($_POST['unam'])) {
-		$ck = md5($_POST['unam']."\t".$_POST['pass']);
-		if ($ck == $ckid) {
-			setcookie($ckid, 1, 0, $appbase);
-			header('Location: '.$appbase.'build.php', true, 301);
-			exit;
+	if (!isset($_COOKIE[$ckid])) {
+		$gobuild = false;
+		if (isset($_POST['unam'])) {
+			$ck = md5($_POST['unam']."\t".$_POST['pass']);
+			if ($ck == $ckid) {
+				setcookie($ckid, 1, 0, $appbase);
+				$gobuild = true;
+			}
 		}
 	}
+}
+if ($gobuild) {
+	header('Location: '.$appbase.'build.php', true, 301);
+	exit;
 }
 ?>
 <!DOCTYPE html>

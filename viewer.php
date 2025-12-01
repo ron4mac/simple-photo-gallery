@@ -49,6 +49,7 @@ if ($isLogged) {
 <button onclick="askUpld()">Upload</button>
 <button onclick="setDelete(this)">Delete</button>
 <button onclick="doCfg()">Config</button>
+<i class="fa fa-lg fa-trash" onclick="delGalQ()"></i>
 </span>';
 	$hdinc = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="'.$base.'/css/admin.css">
