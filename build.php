@@ -24,7 +24,7 @@ if (isset($_POST['galloc'])) {
 		$gbase .= '/';
 		$cfgobj->title = $_POST['galnam'];
 		$cfgobj->desc = 'A new gallery built with the gallery builder';
-		$cfgobj->auth_users = (object) [$_POST['admnam']=>password_hash($_POST['admpass'], null)];
+		$cfgobj->passw = password_hash($_POST['admpass'], null);
 	
 		// figure out this base location relative to root
 		$docr = $_SERVER['DOCUMENT_ROOT'];
@@ -100,7 +100,7 @@ input[type="text"] {
 <body style="background-color:gray">
 <dialog id="newGdlg">
 	<form action="" method="POST">
-	<p>Create a small media gallery for adhoc or long term use</p>
+	<p>Create a small media gallery for either adhoc or long term use</p>
 		<label>
 			Gallery Name:<br>
 			<input type="text" class="textin" name="galnam" value="<?=pVal('galnam')?>" required autofocus>
@@ -108,10 +108,6 @@ input[type="text"] {
 		<label>
 			Server Location:<br>
 			<input type="text" class="textin" name="galloc" value="<?=pVal('galloc')?>" required>
-		</label>
-		<label>
-			Admin User Name:<br>
-			<input type="text" class="textin" name="admnam" value="<?=pVal('admnam')?>" required>
 		</label>
 		<label>
 			Admin Password:<br>

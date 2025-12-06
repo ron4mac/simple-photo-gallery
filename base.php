@@ -116,7 +116,7 @@ if (isset($headScript) && $headScript) {
 </script>
 </head>
 <body>
-<gver>1.2</gver>
+<gver>1.3</gver>
 <?php echo '<header><h2>'.$cfg->title.'</h2>'.(empty($acmds)?'':$acmds).'</header>'; ?>
 <?php echo '<nav>'.(empty($nav)?'':$nav).'</nav>'; ?>
 <?php echo '<section>'.(empty($content)?'':$content).'</section>'; ?>

@@ -9,7 +9,7 @@ $cfgobj = (object) [
 	'css' => 'dark',
 	'title' => 'My Gallery',
 	'desc' => 'A gallery instance',
-	'auth_users' => (object) []
+	'passw' => "\t\t"
 ];
 
 

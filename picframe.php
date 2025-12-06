@@ -82,6 +82,14 @@ $hdinc = '
 .availup {
 	margin: 2em;
 	font-size: x-large;
+	display: flex;
+	gap: 1rem;
+}
+.upFold {
+	border: 1px solid #CCC;
+	border-radius: 5px;
+	padding: 1rem 2rem;
+	cursor: pointer;
 }
 </style>
 <script>
@@ -125,7 +133,7 @@ if (empty($flds)) {
 	$content .= '<div class="availup" onclick="doUpload(event)">';
 	foreach ($flds as $fld=>$v) {
 		if ($v->pubup) {
-			$content .= '<span data-fld="'.$fld.'">'.basename($fld).'</span>';
+			$content .= '<span class="upFold" data-fld="'.$fld.'">'.basename($fld).'</span>';
 		}
 	}
 	$content .= '</div>';
@@ -137,4 +145,5 @@ if (empty($flds)) {
 
 $cdir='???';
 $phpmxu = 16384;
+$upURL = 'admin.php';
 require 'base.php';

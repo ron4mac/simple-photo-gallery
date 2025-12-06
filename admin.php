@@ -5,13 +5,13 @@ if (isset($_GET['pw'])) {
 }
 if (defined('LIREQ')) {
 	$cfg = json_decode(file_get_contents('../config.json'), true);
-	if (isset($_POST['unam'],$_POST['pass'])) {
-		list($user, $pass) = [strtolower($_POST['unam']), $_POST['pass']];
-		$auth_users = $cfg['auth_users'];
-		if (isset($auth_users[$user]) && password_verify($pass, $auth_users[$user])) {
+	if (isset($_POST['pass'])) {
+		$pass = $_POST['pass'];
+		$auth_pass = $cfg['passw'];
+		if (password_verify($pass, $auth_pass)) {
 			session_name('mmg'.substr(sha1(dirname(getcwd())), -30));
 			session_start();
-			$_SESSION['logged'] = $user;
+			$_SESSION['logged'] = md5(dirname(getcwd()));
 			header('Location: ../');
 			exit();
 		}
@@ -28,7 +28,6 @@ if (defined('LIREQ')) {
 		<body>
 			<div class="path">
 				<form action="" method="post" style="margin:10px;text-align:center">
-					<input name="unam" value="" placeholder="Username" required autofocus>
 					<input type="password" name="pass" value="" placeholder="Password" required>
 					<input type="submit" value="Login">
 				</form>
