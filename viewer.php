@@ -14,7 +14,7 @@ $hdinc = '';
 $headScript = [];
 $phpmxu = 0;
 $updone = 'if (!errC) window.location.reload(true);';
-
+$fldsets = (object)['desc' => '','pubup' => 0,'picf' => 0];
 function parse_size ($size)
 {
 	$unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
@@ -91,6 +91,14 @@ $dirts = $cdir;
 //$html .= '<nav>';
 $curD = '';
 $nav = '';
+if (file_exists(IBASE . $dirts . '.fold')) {
+	//$fldsets = json_decode(file_get_contents(IBASE . $dirts . '.fold'));
+	$attrs = json_decode(file_get_contents(IBASE . $dirts . '.fold'), true);
+	foreach($attrs as $k=>$v) {
+		$fldsets->{$k} = $v;
+	}
+}
+
 if (isset($isPubUp)) {
 	$nav .= basename($cdir);
 } elseif ($cdir) {
@@ -110,8 +118,7 @@ if (isset($isPubUp)) {
 } else {
 	$nav .= 'HOME';
 }
-if (empty($isPubUp) && file_exists(IBASE . $dirts . '.fold')) {
-	$fldsets = json_decode(file_get_contents(IBASE . $dirts . '.fold'));
+if (empty($isPubUp) && $isLogged) {
 	if ($fldsets->picf) {
 //	echo'<xmp>';var_dump($_SERVER);echo'</xmp>';
 		$prot = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
@@ -128,6 +135,9 @@ if ($isLogged) {
 //$html .= '</nav>';
 
 $content = '';
+if ($fldsets->desc) {
+	$content .= '<h4>'.$fldsets->desc.'</h4></section><section>';
+}
 //$content .= '<xmp>'.print_r($_POST, true).'</xmp>';
 $dirsl = [];
 $imgsl = [];

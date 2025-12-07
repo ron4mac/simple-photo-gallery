@@ -1,41 +1,22 @@
 nav {
 	font-size:larger;
 	padding-top: .75rem;
+	border-top: 1px solid #CCC;
+}
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
+}
+.acmds .fa-trash {
+	color:coral;
+	margin-left:.5rem;
 }
 textarea {
 	width: 100%;
 }
-.bckb {
-	float:right;
-	width:24px;
-	height:24px;
-	border:1px solid #AAAAAA;
-	margin-left:4px;
-	cursor:pointer;
-}
-.b-blu {background-color:#aaeeff;}
-.b-grn {background-color:#99ff99;}
-.b-red {background-color:#ff2244;}
-.b-blk {background-color:#000000;}
-.b-wht {background-color:#ffffff;}
-.b-trn {background-image:url(css/back1.png);}
 
 .folds, .imgs {
 	clear:both;
 	margin-top:1rem;
-}
-.fold {
-	float:left;
-	position:relative;
-	margin:0 16px 16px 0;
-	padding:0 8px;
-	border:2px solid #CCEEFF
-}
-.fold span {
-	position:absolute;
-	top:50%;
-	left:50%;
-	transform:translate(-50%,-50%);
 }
 .mbox {
 	float:left;

@@ -1,8 +1,5 @@
 var mmg_win_reload = false;
 var mmg_deleting = false;
-var acDlg = document.getElementById('acDlg');
-var acDlgCB = null;
-acDlg.addEventListener('close', (e)=>acDlgCB(e));
 
 function askNewF () {
 	let dlg = document.getElementById('newFdlg');
@@ -173,14 +170,6 @@ function saveFold (evt,elm) {
 function dlgClose (btn) {
 	btn.closest('dialog').close();
 }
-
-function doAcDlg (msg, conf=false, cb=()=>{}) {
-	acDlg.className = conf ? 'conf' : 'alrt';
-	acDlg.querySelector('div').innerHTML = msg;
-	acDlgCB = cb;
-	acDlg.showModal();
-}
-
 
 
 /* uplodr v0.9 */

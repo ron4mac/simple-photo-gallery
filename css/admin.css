@@ -5,6 +5,9 @@ body {
 dialog {
 	margin-top: 10rem;
 	border-radius: 5px;
+	border-color: #888;
+	min-width: 10rem;
+	max-width: 50%;
 }
 
 span.danger {

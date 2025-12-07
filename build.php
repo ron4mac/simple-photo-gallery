@@ -23,7 +23,7 @@ if (isset($_POST['galloc'])) {
 		mkdir($gbase, 0777, true);
 		$gbase .= '/';
 		$cfgobj->title = $_POST['galnam'];
-		$cfgobj->desc = 'A new gallery built with the gallery builder';
+	//	$cfgobj->desc = 'A new gallery built with the gallery builder';
 		$cfgobj->passw = password_hash($_POST['admpass'], null);
 	
 		// figure out this base location relative to root

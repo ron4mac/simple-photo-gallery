@@ -2,6 +2,9 @@ body {
 	color: #EEE;
 	background-color: #111;
 }
+dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
+}
 
 nav a:link { color: lightskyblue; }
 nav a:visited { color: lightskyblue; }

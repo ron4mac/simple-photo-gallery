@@ -1,5 +1,6 @@
 <?php
 $ssdly = empty($cfg->ssdly) ? 6000 : (int)($cfg->ssdly*1000);
+$descQ = $cfg->desc ? ' <i class="fa fa-question-circle-o" onclick="showDesc()"></i>' : '';
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -9,6 +10,7 @@ $ssdly = empty($cfg->ssdly) ? 6000 : (int)($cfg->ssdly*1000);
 <title><?=$cfg->title?></title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.css">
 <style>
+h2 i.fa {font-size:1rem}
 nav {font-size:larger;}
 nav img {vertical-align:text-bottom;}
 nav i {font-size: medium; margin-top: 4px; float: right}
@@ -46,7 +48,7 @@ gver {display: none}
 	left:50%;
 	font-size: large;
 	text-align: center;
-	transform:translate(-50%,-50%);
+	transform:translate(-50%,-40%);
 }
 .fname {
 	display: block;
@@ -86,28 +88,16 @@ gver {display: none}
 }
 </style>
 <link rel="stylesheet" href="<?=$base?>/css/<?=$cfg->css?>.css">
-<!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
-<!-- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script> -->
 <?=$hdinc?>
 <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0.36/dist/fancybox/fancybox.umd.js"></script>
 <script src="<?=$base?>/js/echo.min.js"></script>
 <script>
 const mmg_cdir = "<?=$cdir?>";
+const gal_desc = "<?=str_replace('"','\"',$cfg->desc)?>";
 const h5uOptions = {upURL:'<?=$upURL?>', payload:{imgdir:mmg_cdir}, maxFilesize:0, maxchunksize:<?=$phpmxu-2048?>, doneFunc:(okC, errC, msgC) => uploadDone(okC, errC, msgC)};
-function backc (colr) {
-	var elms = document.getElementsByClassName("aimg");
-	if (colr) {
-		for (var i = 0; i < elms.length; i++) {
-			elms[i].style.backgroundColor = colr;
-			elms[i].style.backgroundImage = "none";
-		}
-	} else {
-		for (var i = 0; i < elms.length; i++) {
-			elms[i].style.backgroundColor = "none";
-			elms[i].style.backgroundImage = "url(../css/back1.png)";
-		}
-	}
-}
+const showDesc = () => {
+	doAcDlg(gal_desc);
+};
 <?php
 if (isset($headScript) && $headScript) {
 	echo implode("\n", $headScript);
@@ -117,13 +107,23 @@ if (isset($headScript) && $headScript) {
 </head>
 <body>
 <gver>1.3</gver>
-<?php echo '<header><h2>'.$cfg->title.'</h2>'.(empty($acmds)?'':$acmds).'</header>'; ?>
+<?php echo '<header><h2>'.$cfg->title.$descQ.'</h2>'.(empty($acmds)?'':$acmds).'</header>'; ?>
 <?php echo '<nav>'.(empty($nav)?'':$nav).'</nav>'; ?>
 <?php echo '<section>'.(empty($content)?'':$content).'</section>'; ?>
 
 <?php //echo $html; ?>
 <?php //echo'<xmp>';var_dump($GLOBALS);echo'</xmp>'; ?>
 <script>
+var acDlg = document.getElementById('acDlg');
+var acDlgCB = null;
+acDlg.addEventListener('close', (e)=>acDlgCB(e));
+function doAcDlg (msg, conf=false, cb=()=>{}) {
+	acDlg.className = conf ? 'conf' : 'alrt';
+	acDlg.querySelector('div').innerHTML = msg;
+	acDlgCB = cb;
+	acDlg.showModal();
+}
+
 Fancybox.bind("[data-fancybox]", {
 	// Your custom options
 	Slideshow: {timeout: <?=$ssdly?>},
@@ -136,6 +136,7 @@ Fancybox.bind("[data-fancybox]", {
 		}
 	}
 });
+
 echo.init({
 	offset: 200,
 	throttle: 250,
