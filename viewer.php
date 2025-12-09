@@ -252,6 +252,8 @@ if ($isLogged || isset($isPubUp)) $content .= '
 	</select>
 	<div id="uplodr"></div>
 </dialog>
+';
+$content .= '
 <dialog id="acDlg" class="alrt">
 	<div></div>
 	<div class="dbutts">

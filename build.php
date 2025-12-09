@@ -9,7 +9,8 @@ if (!file_exists('build/.auth.php')) {
 $alert = '';
 $msg = '';
 $ask = 'true';
-if (isset($_POST['galloc'])) {
+$gals = '';
+if (isset($_POST['create'])) {
 	require 'cfgobj.php';
 	while (true) {
 		$ask = 'false';
@@ -36,7 +37,7 @@ if (isset($_POST['galloc'])) {
 				$tmp = dirname($tmp);
 			}
 			$docr = str_replace($tmp, '', $docr);
-			$rloc = substr(strstr($rloc,$docr), strlen($docr)+1);
+			$rloc = substr(strstr($rloc,$docr), strlen($docr));
 		}
 	
 		file_put_contents($gbase.'config.json', json_encode($cfgobj, JSON_PRETTY_PRINT));
@@ -51,6 +52,30 @@ if (isset($_POST['galloc'])) {
 		mkdir($gbase.'media', 0777);
 		$msg = '<h4>Gallery Created</h4><a href="../'.$_POST['galloc'].'/admin">Go there</a>';
 		break;
+	}
+}
+if (isset($_POST['cancel'])) {
+	$ask = false;
+	//echo'<xmp>';var_dump($_SERVER);echo'</xmp>';
+	$gals = '<h3>Current Existing Galleries</h3>';
+	scan4gals('');
+}
+
+function scan4gals ($dir)
+{
+	global $gals;
+
+	$files = array_diff(scandir($_SERVER['DOCUMENT_ROOT'].$dir), array('.','..'));
+	foreach ($files as $file) {
+		if (is_dir($_SERVER['DOCUMENT_ROOT']."$dir/$file")) {
+			scan4gals("$dir/$file");
+		} elseif ($file == 'config.json') {
+			$cfg = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT']."$dir/$file"));
+			if ($cfg->thms) {
+				$gals .= '<a href="'.$dir.'">'.$cfg->title.'</a>';
+				$gals .= ' <a href="'.$dir.'/admin">(admin)</a><br>';
+			}
+		}
 	}
 }
 
@@ -95,11 +120,21 @@ input[type="text"] {
 	float: right;
 	margin-left: .5rem;
 }
+.galdsp {
+	margin-top: 10em;
+	display: flex;
+	justify-content: center;
+}
+.galist {
+	padding: 2em 4em;
+	background-color: white;
+	border-radius: 5px;
+}
 </style>
 </head>
 <body style="background-color:gray">
 <dialog id="newGdlg">
-	<form action="" method="POST">
+	<form action="" method="POST" onsubmit="this.parentElement.close()">
 	<p>Create a small media gallery for either adhoc or long term use</p>
 		<label>
 			Gallery Name:<br>
@@ -114,8 +149,8 @@ input[type="text"] {
 			<input type="text" class="textin" name="admpass" value="<?=pVal('admpass')?>" required>
 		</label>
 		<div class="dbuts">
-			<input type="submit" value="Create">
-			<input type="reset" value="Cancel">
+			<input type="submit" name="create" value="Create">
+			<input type="submit" name="cancel" value="Cancel" formnovalidate>
 		</div>
 	</form>
 </dialog>
@@ -144,16 +179,23 @@ if (ask) {
 }
 if (msg) dmsg(msg);
 </script>
+<?php if($gals): ?>
+<div class="galdsp">
+	<div class="galist">
+	<?=$gals?>
+	</div>
+</div>
+<?php endif; ?>
 </body>
 </html>
 <?php __halt_compiler()?>
 index.php====<?php
 $droot = $_SERVER['DOCUMENT_ROOT'];
-$base = '/####';
+$base = '####';
 $gbase = dirname(__FILE__);
 $gbases = $gbase.'/';
 $rqf = empty($_GET['f']) ? 'viewer.php' : 'thumb.php';
-require $droot.'/####/'.$rqf;
+require $droot.'####/'.$rqf;
 &&&&admin.php====<?php
 $droot = $_SERVER['DOCUMENT_ROOT'];
 $gbase = dirname(__FILE__);
@@ -162,16 +204,16 @@ session_name('mmg'.substr(sha1($gbase), -30));
 session_start();
 (isset($_SESSION['logged']) || !empty($_GET['_pfu_'])) or die('Not authorized');
 define('ADM',1);
-require $droot.'/####/admin.php';
+require $droot.'####/admin.php';
 &&&&admin/index.php====<?php
 define('LIREQ',1);
 $droot = $_SERVER['DOCUMENT_ROOT'];
-require $droot.'/####/admin.php';
+require $droot.'####/admin.php';
 exit();
 &&&&picframe/index.php====<?php
 $droot = $_SERVER['DOCUMENT_ROOT'];
-$base = '/####';
+$base = '####';
 $gbase = dirname(dirname(__FILE__));
 $gbases = $gbase.'/';
 define('IBASE','media/');
-require $droot.'/####/picframe.php';
+require $droot.'####/picframe.php';
