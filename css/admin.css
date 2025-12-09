@@ -17,7 +17,7 @@ span.danger {
 .acmds {
 	position: absolute;
 	top: 1rem;
-	right: 1rem;
+	right: 0;
 }
 .dbutts {
 	display: flex;

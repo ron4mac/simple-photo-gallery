@@ -4,7 +4,7 @@ nav {
 	border-top: 1px solid #CCC;
 }
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
+	background-color: rgba(0, 0, 0, 0.4);
 }
 .acmds .fa-trash {
 	color:coral;

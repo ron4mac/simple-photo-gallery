@@ -133,7 +133,9 @@ if (empty($flds)) {
 	$content .= '<div class="availup" onclick="doUpload(event)">';
 	foreach ($flds as $fld=>$v) {
 		if ($v->pubup) {
-			$content .= '<span class="upFold" data-fld="'.$fld.'">'.basename($fld).'</span>';
+			$f =  basename($fld);
+			if (empty($f)) $f = 'HOME';
+			$content .= '<span class="upFold" data-fld="'.$fld.'">'.$f.'</span>';
 		}
 	}
 	$content .= '</div>';

@@ -3,18 +3,18 @@ body {
 	background-color: #111;
 }
 dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent black */
+	background-color: rgba(0, 0, 0, 0.4);
 }
 
 nav a:link { color: lightskyblue; }
 nav a:visited { color: lightskyblue; }
 nav {
-    border-top: 1px dotted #AAA;
-    padding-top: .75rem;
+	border-top: 1px dotted #AAA;
+	padding-top: .75rem;
 }
 .acmds .fa-trash {
-	color:yellow;
-	margin-left:.5rem;
+	color: coral;
+	margin-left: .5rem;
 }
 
 textarea {

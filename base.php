@@ -13,7 +13,7 @@ $descQ = $cfg->desc ? ' <i class="fa fa-question-circle-o" onclick="showDesc()">
 h2 i.fa {font-size:1rem}
 nav {font-size:larger;}
 nav img {vertical-align:text-bottom;}
-nav i {font-size: medium; margin-top: 4px; float: right}
+nav i {font-size: medium; float: right}
 gver {display: none}
 .folds, .imgs {
 	clear:both;
@@ -106,7 +106,7 @@ if (isset($headScript) && $headScript) {
 </script>
 </head>
 <body>
-<gver>1.3</gver>
+<gver>1.4</gver>
 <?php echo '<header><h2>'.$cfg->title.$descQ.'</h2>'.(empty($acmds)?'':$acmds).'</header>'; ?>
 <?php echo '<nav>'.(empty($nav)?'':$nav).'</nav>'; ?>
 <?php echo '<section>'.(empty($content)?'':$content).'</section>'; ?>
@@ -126,7 +126,12 @@ function doAcDlg (msg, conf=false, cb=()=>{}) {
 
 Fancybox.bind("[data-fancybox]", {
 	// Your custom options
-	Slideshow: {timeout: <?=$ssdly?>},
+	Slideshow: {
+		timeout: <?=$ssdly?>,
+		progressParentEl: (slideshow) => {
+			return slideshow.instance.container;
+		}
+	},
 	Thumbs: false,
 	Toolbar: {
 		display: {
