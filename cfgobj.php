@@ -2,7 +2,7 @@
 
 // default gallery configuration object
 $cfgobj = (object) [
-	'imgs' => (object) ['r'=>1,'w'=>1200,'h'=>1200,'q'=>90],
+	'imgs' => (object) ['r'=>1,'w'=>1920,'h'=>1920,'q'=>90],
 	'thms' => (object) ['w'=>120,'h'=>120,'q'=>90],
 	'flds' => (object) ['w'=>128,'h'=>128],
 	'ssdly' => 6,

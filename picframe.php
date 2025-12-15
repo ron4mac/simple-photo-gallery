@@ -10,13 +10,10 @@ if (isset($_GET['act'])) {
 		getPlayList($_GET['fld'], true);
 		break;
 	case 'getimg':
-//		if (!defined('PFDW')) {
-//			define('PFDW', 1280);
-//			define('PFDH', 800);
-//			define('IMGBKG', 'bgi3.jpeg');
-//		}
 		if (isset($_GET['dim'])) {
-			list($iw,$ih) = explode('.', $_GET['dim']);
+			list($iw,$ih) = preg_split('/[\.x]/', $_GET['dim']);
+			define('PFDW', $iw);
+			define('PFDH', $ih);
 			require 'classes/frameimg.php';
 			$imgp = new FrameImage();
 			header('Content-Type: image/jpeg; charset=utf-8',true);
