@@ -9,8 +9,12 @@ if (isset($_POST['picup'])) {
 	$upURL .= '?_pfu_=1';
 }
 
+if (isset($hdinc)) {
+	$hdinc .= '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">';
+} else {
+	$hdinc = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">';
+}
 $acmds = '';
-$hdinc = '';
 $headScript = [];
 $phpmxu = 0;
 $updone = 'if (!errC) window.location.reload(true);';
@@ -51,7 +55,7 @@ if ($isLogged) {
 <button onclick="doCfg()">Config</button>
 <i class="fa fa-lg fa-trash" onclick="delGalQ()"></i>
 </span>';
-	$hdinc = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	$hdinc .= '
 <link rel="stylesheet" href="'.$base.'/css/admin.css">
 <script>const appB="'.$base.'"</script>
 <script src="'.$base.'/js/admin.js" defer></script>';
@@ -60,7 +64,7 @@ if ($isLogged) {
 //	$acmds = '<span class="acmds">
 //<button onclick="askUpld()">Upload</button>
 //</span>';
-	$hdinc = '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	$hdinc .= '
 <link rel="stylesheet" href="'.$base.'/css/admin.css">
 <style>.pupbtn{margin-left:1rem}</style>
 <script>const appB="'.$base.'"</script>
@@ -119,6 +123,7 @@ if (isset($isPubUp)) {
 	$nav .= 'HOME';
 }
 if (empty($isPubUp) && $isLogged) {
+	if ($fldsets->pubup) $nav .= ' <span class="fa fa-cloud-upload" aria-hidden="true"></span>';
 	if ($fldsets->picf) {
 //	echo'<xmp>';var_dump($_SERVER);echo'</xmp>';
 		$prot = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
@@ -214,7 +219,7 @@ if ($isLogged) $content .= '
 	<form method="dialog" onsubmit="return newFreq(event,this)">
 		<label>
 			Folder name:
-			<input type="text" class="textin" name="newFnam" required autofocus>
+			<input type="text" class="textin" name="newFnam" autocapitalize="off" required autofocus>
 		</label>
 		<div class="dbutts">
 			<input type="reset" value="Cancel" onclick="dlgClose(this)">

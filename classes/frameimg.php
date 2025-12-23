@@ -3,7 +3,7 @@ if (!defined('PFDW')) {
 	define('PFDW', 1280);
 	define('PFDH', 800);
 }
-define('IMGBKG', $droot.$base.'/css/1460.jpg');
+define('IMGBKG', $droot.$base.'/css/bg12.jpeg');
 
 class FrameImage
 {

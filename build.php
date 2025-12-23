@@ -8,16 +8,16 @@ if (!file_exists('build/.auth.php')) {
 
 $alert = '';
 $msg = '';
-$ask = 'true';
+$ask = true;
 $gals = '';
 if (isset($_POST['create'])) {
 	require 'cfgobj.php';
 	while (true) {
-		$ask = 'false';
+		$ask = false;
 		$droot = $_SERVER['DOCUMENT_ROOT'].'/';
 		$gbase = $droot.$_POST['galloc'];
 		if (file_exists($gbase)) {
-			$ask = 'true';
+			$ask = true;
 			$alert = "Directory '{$_POST['galloc']}' already exists.";
 			break;
 		}
@@ -90,13 +90,13 @@ function pVal ($n)
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Gallery Instance Creation</title>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css">
+<!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"> -->
 <style>
 body {
 	background-color: gray;
 }
 dialog {
-	margin-top: 16rem;
+	margin-top: 10rem;
 	border: 1px solid #AAA;
 	border-radius: 5px;
 }
@@ -130,6 +130,25 @@ input[type="text"] {
 	background-color: white;
 	border-radius: 5px;
 }
+.waiting {
+	display: <?=$ask?'flex':'none'?>;
+	justify-content: center;
+	margin-top: 14rem;
+}
+.spinner {
+	width: 64px;
+	height: 64px;
+	border: 3px solid #FFF;
+	border-bottom-color: transparent;
+	border-radius: 50%;
+	display: inline-block;
+	box-sizing: border-box;
+	animation: spin 1s linear infinite;
+}
+@keyframes spin {
+	0% {transform: rotate(0deg);}
+	100% {transform: rotate(360deg);}
+}
 </style>
 </head>
 <body style="background-color:gray">
@@ -142,11 +161,11 @@ input[type="text"] {
 		</label>
 		<label>
 			Server Location:<br>
-			<input type="text" class="textin" name="galloc" value="<?=pVal('galloc')?>" required>
+			<input type="text" class="textin" name="galloc" autocapitalize="off" value="<?=pVal('galloc')?>" required>
 		</label>
 		<label>
 			Admin Password:<br>
-			<input type="text" class="textin" name="admpass" value="<?=pVal('admpass')?>" required>
+			<input type="text" class="textin" name="admpass" autocapitalize="off" value="<?=pVal('admpass')?>" required>
 		</label>
 		<div class="dbuts">
 			<input type="submit" name="create" value="Create">
@@ -159,7 +178,7 @@ input[type="text"] {
 	<input type="reset" value="Ok" onclick="this.closest('dialog').close()">
 </dialog>
 <script>
-const ask = <?=$ask?>;
+const ask = <?=$ask?'true':'false'?>;
 const alrt = "<?=$alert?>";
 const msg = '<?=$msg?>';
 const dmsg = (m) => {
@@ -186,6 +205,7 @@ if (msg) dmsg(msg);
 	</div>
 </div>
 <?php endif; ?>
+<div class="waiting"><span class="spinner"></span></div>
 </body>
 </html>
 <?php __halt_compiler()?>
