@@ -67,10 +67,11 @@ function scan4gals ($dir)
 
 	$files = array_diff(scandir($_SERVER['DOCUMENT_ROOT'].$dir), array('.','..'));
 	foreach ($files as $file) {
-		if (is_dir($_SERVER['DOCUMENT_ROOT']."$dir/$file")) {
-			scan4gals("$dir/$file");
+		$rdf = $_SERVER['DOCUMENT_ROOT']."$dir/$file";
+		if (is_dir($rdf)) {
+			if (!is_link($rdf)) scan4gals("$dir/$file");	// don't follow symlink directories
 		} elseif ($file == 'config.json') {
-			$cfg = json_decode(file_get_contents($_SERVER['DOCUMENT_ROOT']."$dir/$file"));
+			$cfg = json_decode(file_get_contents($rdf));
 			if ($cfg->thms) {
 				$gals .= '<a href="'.$dir.'">'.$cfg->title.'</a>';
 				$gals .= ' <a href="'.$dir.'/admin">(admin)</a><br>';

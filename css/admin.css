@@ -48,6 +48,12 @@ span.danger {
 #cfgElms input[type="text"] {
 	min-width: 200px;
 }
+.cfgAdv {
+	margin-right: auto;
+}
+.bgidsp .fancybox__content {
+	border: 3px solid #AAA;
+}
 
 /* uplodr v0.8 */
 #uplodr { margin-top: 0.5rem }

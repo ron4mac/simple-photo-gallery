@@ -10,10 +10,15 @@ if (isset($_GET['act'])) {
 		getPlayList($_GET['fld'], true);
 		break;
 	case 'getimg':
+		$cfg = json_decode(file_get_contents('../config.json'));
+		if (isset($cfg->bgi)) {
+			define('IMGBKG', $droot.$base.'/css/bg'.$cfg->bgi.'.jpeg');
+		}
 		if (isset($_GET['dim'])) {
 			list($iw,$ih) = preg_split('/[\.x]/', $_GET['dim']);
 			define('PFDW', $iw);
 			define('PFDH', $ih);
+			define('PFWX', isset($cfg->pexp) ? $cfg->pexp/100 : 0);
 			require 'classes/frameimg.php';
 			$imgp = new FrameImage();
 			header('Content-Type: image/jpeg; charset=utf-8',true);
@@ -61,7 +66,10 @@ function getPlayList ($fld, $thms=false, $pco=false)
 		echo $pics;
 		return;
 	}
-	if (!$thms) echo "\t\t\t\t" . count($pics) . "\t" . implode("\n",$pics);
+	if (!$thms) {
+		shuffle($pics);
+		echo "\t\t\t\t" . count($pics) . "\t" . implode("\n",$pics);
+	}
 }
 
 function sendImage ($img)

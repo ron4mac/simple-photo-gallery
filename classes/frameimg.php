@@ -2,8 +2,11 @@
 if (!defined('PFDW')) {
 	define('PFDW', 1280);
 	define('PFDH', 800);
+	define('PFWX', 0);
 }
-define('IMGBKG', $droot.$base.'/css/bg12.jpeg');
+if (!defined('IMGBKG')) {
+	define('IMGBKG', $droot.$base.'/css/bg10.jpeg');
+}
 
 class FrameImage
 {
@@ -74,13 +77,13 @@ class FrameImage
 		// use the w/h from the possibly rotated image
 		$w = imagesx($src_img);
 		$h = imagesy($src_img);
-		list($nw,$nh,$x,$y) = $h>$w ? $this->inFrameRect($w,$h,PFDW,PFDH) : $this->frameRect($w,$h,PFDW,PFDH);
+		list($nw,$nh,$x,$y,$ax,$ay) = $h>$w ? $this->inFrameRect($w,$h,PFDW,PFDH,PFWX) : array_pad($this->frameRect($w,$h,PFDW,PFDH), 6, 0);
 		$dst_img = $this->createImage(PFDW, PFDH, $h>$w ? IMGBKG : null);
 
 		if ($h>$w) {
-			$result = imagecopyresampled($dst_img, $src_img, $x, $y, 0, 0, $nw, $nh, $w, $h);
+			$result = imagecopyresampled($dst_img, $src_img, $x, $y, $ax, $ay, $nw, $nh, $w, $h);
 			if (!$result) {
-				$result = @imagecopyresized($dst_img, $src_img, $x, $y, 0, 0, $nw, $nh, $w, $h);
+				$result = @imagecopyresized($dst_img, $src_img, $x, $y, $ax, $ay, $nw, $nh, $w, $h);
 			}
 		} else {
 			$result = imagecopyresampled($dst_img, $src_img, 0, 0, $x, $y, PFDW, PFDH, $nw, $nh);
@@ -116,16 +119,21 @@ class FrameImage
 	}
 
 	// size to fit completely in rect .. portrait in landscape here
-	private function inFrameRect ($sW, $sH, $dW, $dH)
+	// $xP (0..1) amount of blank space on sides to expand into, clipping top and bottom
+	private function inFrameRect ($sW, $sH, $dW, $dH, $xP)
 	{
-		// get the size ratio for each
-		$sar = $sW/$sH;
-		$dar = $dW/$dH;
+		$sar = $sW/$sH;		//size width ratio
 		$fH = $dH;
 		$fW = round($sW*$dH/$sH);
-		$x = ($dW-$fW)>>1;
+		$pwa = (int)(($dW-$fW)*$xP);
+		$pha = (int)($pwa/$sar);
+		$dx = ($dW-$fW-$pwa)>>1;
 
-		return [$fW, $fH, $x, 0];
+		$nw = $fW+$pwa;
+		$nh = (int)(($fW+$pwa)/$sar);
+		$nhs = (int)($pha*$sH/$nh);
+		$sy = $nhs>>1;
+		return [$nw, $nh, $dx, 0, 0, $sy];
 	}
 
 	private function getimgRes ($name, $type)

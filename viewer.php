@@ -231,6 +231,7 @@ if ($isLogged) $content .= '
 	<form method="dialog" onsubmit="return saveCfg(event,this)">
 		<div id="cfgElms" class="dlgElems"></div>
 		<div class="dbutts">
+			<input type="submit" class="cfgAdv" value="Advanced">
 			<input type="reset" class="cfgClos" value="Cancel" onclick="dlgClose(this)">
 			<input type="submit" class="cfgSave" value="Save">
 		</div>

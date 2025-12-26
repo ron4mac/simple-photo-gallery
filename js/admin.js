@@ -94,15 +94,16 @@ function setDelete (elm) {
 	});
 }
 
-function doCfg () {
+function doCfg (L=1) {
 	let dlg = document.getElementById('cfgDlg');
 	dlg.addEventListener('close', (e) => {
 		//if (mmg_win_reload) window.location.reload(true);
-		console.log(dlg.returnValue);
+		console.log(e,dlg.returnValue);
 		//H5uClear();
+		Fancybox.close();
 	});
 
-	let parms = new URLSearchParams('cfg=1');
+	let parms = new URLSearchParams('cfg='+L);
 	fetch('admin.php', {method:'POST',body:parms})
 	.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 	.then(data => {
@@ -115,14 +116,26 @@ function doCfg () {
 
 function saveCfg (evt,elm) {
 	console.log(evt,elm);
+	if (evt.submitter.className=='cfgAdv') {
+		evt.submitter.style.display = 'none';
+		doCfg(2);
+		return;
+	}
 	let parms = new FormData(elm);
 	fetch('admin.php', {method:'POST',body:parms})
 	.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 	.then(data => {
 		console.log(data);
-		window.location.reload(true);
+//		window.location.reload(true);
 	})
 	.catch(err => alert('Failure: '+err));
+}
+
+function showBgi (sel) {
+	console.log(sel.value);
+	const bgi = sel.value;
+	Fancybox.close();
+	Fancybox.show([{src: `${appB}/css/bg${bgi}.jpeg`}],{mainClass:'bgidsp'});
 }
 
 function delGalQ () {

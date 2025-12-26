@@ -23,6 +23,35 @@ if (isset($_POST['gtitle'])) {
 	exit(print_r($rslt,true));
 }
 
+if (isset($_POST['bgi'])) {
+	// set the new values
+	$cfg->bgi = $_POST['bgi'];
+	$cfg->pexp = $_POST['pexp'];
+	$rslt = file_put_contents(CFGFILE, json_encode($cfg, JSON_PRETTY_PRINT));
+	exit(print_r($rslt,true));
+}
+
+if ($_POST['cfg']==2) {
+	$html = 'This will be advanced.';
+	$html .= '<br><label>Background image: <select name="bgi" onchange="showBgi(this)">';
+	foreach (glob(__DIR__.'/css/bg*.jpeg') as $fn) {
+		if (preg_match('/bg(.*)\.jpeg/',$fn,$m)) {
+			$spec = $m[1];
+			$sel = $spec==$cfg->bgi ? ' selected' : '';
+			$html .= '<option value="'.$spec.'"'.$sel.'>'.$spec.'</option>';
+		}
+	}
+
+//	$html .= '<option value="10">10</option>';
+//	$html .= '<option value="11">11</option>';
+//	$html .= '<option value="12">12</option>';
+//	$html .= '<option value="13">13</option>';
+	$html .= '</select></label>';
+	$html .= '<label>Expand portrait images: <input type="number" name="pexp" min="0" max="100" step="5" value="'.$cfg->pexp.'">%</label>';
+	$html .= '<input type="hidden" name="cfg" value="2">';
+	exit($html);
+}
+
 // send the form body
 $html = '<label>Gallery title: <input type="text" name="gtitle" value="'.$cfg->title.'" required autofocus></label>';
 $html .= '<label>Gallery description<br><textarea name="desc" rows="3">'.$cfg->desc.'</textarea></label>';
