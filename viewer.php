@@ -46,7 +46,6 @@ function file_upload_max_size ()
 	return $max_size;
 }
 
-//echo'<xmp>';var_dump($_SERVER);echo'</xmp>';
 if ($isLogged) {
 	$acmds = '<span class="acmds">
 <button class="newFbut" onclick="askNewF()">New Folder</button>
@@ -87,26 +86,20 @@ function f2fn ($f)
 
 $cdir = empty($_GET['d']) ? '' : (htmlentities($_GET['d']) . '/');
 $dirts = $cdir;
-//	echo $dirts;
-//echo '<xmp>';var_dump($_SERVER);echo '</xmp>';
-
-//$html = '<header><h2>'.$cfg->title.'</h2>'.$acmds.'</header>';
-
-//$html .= '<nav>';
 $curD = '';
 $nav = '';
 if (file_exists(IBASE . $dirts . '.fold')) {
-	//$fldsets = json_decode(file_get_contents(IBASE . $dirts . '.fold'));
 	$attrs = json_decode(file_get_contents(IBASE . $dirts . '.fold'), true);
 	foreach($attrs as $k=>$v) {
 		$fldsets->{$k} = $v;
 	}
 }
 
+$navH = '<span class="fa fa-home" aria-hidden="true">HOME</span>';
 if (isset($isPubUp)) {
 	$nav .= basename($cdir);
 } elseif ($cdir) {
-	$hico = 'HOME';	//'<img src="../css/'.($cfg->css=='dark' ? 'homed.svg' : 'home.svg').'">';
+	$hico = $navH;
 	$href = './';	//htmlentities($_SERVER['SCRIPT_URL']);
 	$nav .= '<a href="'.$href.'">'.$hico.'</a>';
 	$href = './?d=';
@@ -120,16 +113,15 @@ if (isset($isPubUp)) {
 	}
 	$nav .= " / $curD";
 } else {
-	$nav .= 'HOME';
+	$nav .= $navH;
 }
 if (empty($isPubUp) && $isLogged) {
 	if ($fldsets->pubup) $nav .= ' <span class="fa fa-cloud-upload" aria-hidden="true"></span>';
 	if ($fldsets->picf) {
-//	echo'<xmp>';var_dump($_SERVER);echo'</xmp>';
 		$prot = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 		$uri = substr($_SERVER['REQUEST_URI'], 0, strrpos($_SERVER['REQUEST_URI'],'/'));
 		$plk = base64_encode($prot . "://" . $_SERVER['HTTP_HOST'] . $uri . '/picframe/?act=plist&fld=' . urlencode($dirts));
-		$nav .= ' <a href="http://picframe.local/static/cgetnpl.html?nplt='.urlencode(basename($dirts)).'&nplk='.$plk.'" target="_blank"><img src="'.$base.'/css/picframe.png"></a>';
+		$nav .= ' <a href="http://picframe.local/static/cgetnpl.html?nplt='.urlencode(basename($dirts)).'&nplk='.$plk.'" class="gopic" target="_blank"><span class="fa fa-picture-o"></span></a>';
 	}
 }
 if ($isLogged) {
@@ -137,13 +129,12 @@ if ($isLogged) {
 } else if (isset($isPubUp)) {
 	$nav .= '<span class="pupbtn"><button onclick="askUpld()">Upload</button></span>';
 }
-//$html .= '</nav>';
 
 $content = '';
 if ($fldsets->desc) {
 	$content .= '<h4>'.$fldsets->desc.'</h4></section><section>';
 }
-//$content .= '<xmp>'.print_r($_POST, true).'</xmp>';
+
 $dirsl = [];
 $imgsl = [];
 
@@ -169,7 +160,6 @@ foreach ($files as $file) {
 	case 'audio/':
 		// fancybox doesn't directly handle audio so force an iframe
 		$imgsl[$file] = ['javascript:;" data-type="iframe" data-src="'.$iurl, $base.'/css/audio.svg'];
-	//	$imgsl[$file] = [$iurl, 'css/audio.svg'];
 		break;
 	case 'applic':
 		$iurl = $fpath;
@@ -197,7 +187,6 @@ if ($imgsl) {
 	ksort($imgsl, SORT_NATURAL);	//, SORT_NATURAL | SORT_FLAG_CASE);
 	foreach ($imgsl as $file=>$aimg) {
 		if (is_array($aimg)) {
-		//	$content .= '<div class="mbox mdya"><p>'.$file.'</p>';
 			$fn = isset($aimg[2]) ? ('<span class="fname">'.$aimg[2].'</span>') : '';
 			if ($isLogged) $content .= '<div><div class="delbox"><img src="'.$base.'/css/deleterc.svg" data-file="'.$file.'" onclick="delToggle(this)"></div>';
 			$content .= '<a data-fancybox="gallery" href="'.IBASE.$aimg[0].'"><img src="'.$base.'/css/img.png" data-echo="'.$aimg[1].'" />'.$fn.'</a>';
@@ -211,9 +200,6 @@ if ($imgsl) {
 }
 
 $content .= '<br style="clear:both">';
-//$svgobj = simplexml_load_file($dirts.'rain.svg');
-//echo'<xmp>';var_dump($svgobj);echo'</xmp>';
-//if ($isLogged) $content .= $_SESSION['logged'];
 if ($isLogged) $content .= '
 <dialog id="newFdlg">
 	<form method="dialog" onsubmit="return newFreq(event,this)">

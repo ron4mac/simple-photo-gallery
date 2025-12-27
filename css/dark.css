@@ -6,8 +6,8 @@ dialog::backdrop {
 	background-color: rgba(0, 0, 0, 0.4);
 }
 
-nav a:link { color: lightskyblue; }
-nav a:visited { color: lightskyblue; }
+nav a:link { color: darkseagreen; }
+nav a:visited { color: darkseagreen; }
 nav {
 	border-top: 1px dotted #AAA;
 	padding-top: .75rem;
@@ -16,6 +16,13 @@ nav {
 	color: coral;
 	margin-left: .5rem;
 }
+.fa-cloud-upload {
+	color: lightblue;
+}
+nav a.gopic {
+	color: goldenrod;
+}
+
 
 textarea {
 	width: 100%;

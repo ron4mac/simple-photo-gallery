@@ -1,15 +1,25 @@
+dialog::backdrop {
+	background-color: rgba(0, 0, 0, 0.4);
+}
+nav a:link { color: darkseagreen; }
+nav a:visited { color: darkseagreen; }
 nav {
 	font-size:larger;
 	padding-top: .75rem;
 	border-top: 1px solid #CCC;
 }
-dialog::backdrop {
-	background-color: rgba(0, 0, 0, 0.4);
-}
 .acmds .fa-trash {
 	color:coral;
 	margin-left:.5rem;
 }
+
+.fa-cloud-upload {
+	color: lightblue;
+}
+nav a.gopic {
+	color: goldenrod;
+}
+
 textarea {
 	width: 100%;
 }

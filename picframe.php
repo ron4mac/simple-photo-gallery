@@ -1,36 +1,44 @@
 <?php
 
 if (isset($_GET['act'])) {
-	header('Access-Control-Allow-Origin: *');
-	switch ($_GET['act']) {
-	case 'plist':
-		getPlayList($_GET['fld'], false, isset($_GET['pco']));
-		break;
-	case 'thms':
-		getPlayList($_GET['fld'], true);
-		break;
-	case 'getimg':
-		$cfg = json_decode(file_get_contents('../config.json'));
-		if (isset($cfg->bgi)) {
-			define('IMGBKG', $droot.$base.'/css/bg'.$cfg->bgi.'.jpeg');
-		}
-		if (isset($_GET['dim'])) {
-			list($iw,$ih) = preg_split('/[\.x]/', $_GET['dim']);
-			define('PFDW', $iw);
-			define('PFDH', $ih);
-			define('PFWX', isset($cfg->pexp) ? $cfg->pexp/100 : 0);
-			require 'classes/frameimg.php';
-			$imgp = new FrameImage();
-			header('Content-Type: image/jpeg; charset=utf-8',true);
-			$imgp->makeFimg($gbases.IBASE.$_GET['img']);
+//	file_put_contents('log.txt', print_r([time(),$_GET], true), FILE_APPEND);
+	try {
+		header('Access-Control-Allow-Origin: *');
+		switch ($_GET['act']) {
+		case 'plist':
+			getPlayList($_GET['fld'], false, isset($_GET['pco']));
 			break;
+		case 'thms':
+			getPlayList($_GET['fld'], true);
+			break;
+		case 'getimg':
+			$cfg = json_decode(file_get_contents('../config.json'));
+			if (isset($cfg->bgi)) {
+				define('IMGBKG', $droot.$base.'/css/bg_'.$cfg->bgi.'.jpeg');
+			}
+			if (isset($_GET['dim'])) {
+				list($iw,$ih) = preg_split('/[\.x]/', $_GET['dim']);
+				define('PFDW', $iw);
+				define('PFDH', $ih);
+				define('PFWX', isset($cfg->pexp) ? $cfg->pexp/100 : 0);
+				require 'classes/frameimg.php';
+				$imgp = new FrameImage();
+				header('Content-Type: image/jpeg; charset=utf-8',true);
+				$imgp->makeFimg($gbases.IBASE.$_GET['img']);
+				break;
+			}
+			header('Content-Type: image/jpeg; charset=utf-8',true);
+			readfile($gbases.IBASE.$_GET['img']);
+			break;
+		default:
+			throw new Exception('UNKNOWN ACTION');
 		}
-		sendImage($_GET['img']);
-		break;
-	default:
-		throw new Exception('UNKNOWN ACTION');
+		exit();
+	} catch (\Throwable $e) {
+		header('HTTP/1.1 '.(400+$e->getCode()).' Action Failed: '.$_GET['act']);
+		file_put_contents('catch.err.txt', print_r($e, true), FILE_APPEND);
+		exit($e->getMessage());
 	}
-	exit();
 }
 
 function getPlayList ($fld, $thms=false, $pco=false)
@@ -71,15 +79,6 @@ function getPlayList ($fld, $thms=false, $pco=false)
 		echo "\t\t\t\t" . count($pics) . "\t" . implode("\n",$pics);
 	}
 }
-
-function sendImage ($img)
-{
-	global $gbases;
-
-	header('Content-Type: image/jpeg; charset=utf-8',true);
-	readfile($gbases.IBASE.$img);
-}
-
 
 
 $hdinc = '

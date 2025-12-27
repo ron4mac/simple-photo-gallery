@@ -126,7 +126,7 @@ function saveCfg (evt,elm) {
 	.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 	.then(data => {
 		console.log(data);
-//		window.location.reload(true);
+		window.location.reload(true);
 	})
 	.catch(err => alert('Failure: '+err));
 }
@@ -135,7 +135,7 @@ function showBgi (sel) {
 	console.log(sel.value);
 	const bgi = sel.value;
 	Fancybox.close();
-	Fancybox.show([{src: `${appB}/css/bg${bgi}.jpeg`}],{mainClass:'bgidsp'});
+	Fancybox.show([{src: `${appB}/css/bg_${bgi}.jpeg`}],{mainClass:'bgidsp'});
 }
 
 function delGalQ () {

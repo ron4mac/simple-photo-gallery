@@ -5,7 +5,7 @@ if (!defined('PFDW')) {
 	define('PFWX', 0);
 }
 if (!defined('IMGBKG')) {
-	define('IMGBKG', $droot.$base.'/css/bg10.jpeg');
+	define('IMGBKG', $droot.$base.'/css/bg_10.jpeg');
 }
 
 class FrameImage

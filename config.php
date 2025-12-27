@@ -34,18 +34,13 @@ if (isset($_POST['bgi'])) {
 if ($_POST['cfg']==2) {
 	$html = 'This will be advanced.';
 	$html .= '<br><label>Background image: <select name="bgi" onchange="showBgi(this)">';
-	foreach (glob(__DIR__.'/css/bg*.jpeg') as $fn) {
-		if (preg_match('/bg(.*)\.jpeg/',$fn,$m)) {
+	foreach (glob(__DIR__.'/css/bg_*.jpeg') as $fn) {
+		if (preg_match('/bg_(.*)\.jpeg/',$fn,$m)) {
 			$spec = $m[1];
 			$sel = $spec==$cfg->bgi ? ' selected' : '';
 			$html .= '<option value="'.$spec.'"'.$sel.'>'.$spec.'</option>';
 		}
 	}
-
-//	$html .= '<option value="10">10</option>';
-//	$html .= '<option value="11">11</option>';
-//	$html .= '<option value="12">12</option>';
-//	$html .= '<option value="13">13</option>';
 	$html .= '</select></label>';
 	$html .= '<label>Expand portrait images: <input type="number" name="pexp" min="0" max="100" step="5" value="'.$cfg->pexp.'">%</label>';
 	$html .= '<input type="hidden" name="cfg" value="2">';
