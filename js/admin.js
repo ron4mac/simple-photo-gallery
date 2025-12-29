@@ -1,5 +1,6 @@
 var mmg_win_reload = false;
 var mmg_deleting = false;
+var mmg_moving = false;
 
 function askNewF () {
 	let dlg = document.getElementById('newFdlg');
@@ -10,20 +11,20 @@ function askUpld () {
 	let dlg = document.getElementById('uplddlg');
 	dlg.addEventListener('close', (e) => {
 		if (mmg_win_reload) window.location.reload(true);
-		console.log(dlg.returnValue);
+		//console.log(dlg.returnValue);
 		H5uClear();
 	});
 	dlg.show();
 }
 
 function uploadDone (okC, errC, msgC) {
-	console.log(okC,errC,msgC);
+	//console.log(okC,errC,msgC);
 	if (!errC) window.location.reload(true);
 	if (okC) mmg_win_reload = true;
 }
 
 function newFreq (evt,elm) {
-	console.log(evt,elm,elm.newFnam.value);
+	//console.log(evt,elm,elm.newFnam.value);
 	//evt.preventDefault();
 	let fnam = elm.newFnam.value.trim().replaceAll('/','_');
 	if (fnam) {
@@ -31,7 +32,7 @@ function newFreq (evt,elm) {
 		fetch('admin.php', {method:'POST',body:parms})
 		.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 		.then(data => {
-			console.log(data);
+			//console.log(data);
 			window.location.reload(true);
 		})
 		.catch(err => alert('Failure: '+err));
@@ -42,16 +43,34 @@ function newFreq (evt,elm) {
 	return true;
 }
 
-function delToggle (elm) {
-	let isrc;
-	if (elm.dataset.delm) {
-		delete elm.dataset.delm;
-		isrc = 'deleterc.svg';
-	} else {
-		elm.dataset.delm = 1;
-		isrc = 'deleter.svg';
+function selToggle (elm) {
+	let isrc = 'deleterc.svg';
+	if (mmg_moving) {
+		if (elm.dataset.melm) {
+			delete elm.dataset.melm;
+		} else {
+			elm.dataset.melm = 1;
+			isrc = 'select.svg';
+		}
+	} else if (mmg_deleting) {
+		if (elm.dataset.delm) {
+			delete elm.dataset.delm;
+		} else {
+			elm.dataset.delm = 1;
+			isrc = 'deleter.svg';
+		}
 	}
 	elm.src = appB+'/css/'+isrc;
+}
+
+function cancelSelectAction (dsv) {
+	const boxes = document.querySelectorAll('.selbox');
+	boxes.forEach(box => {
+		let i = box.querySelector('img');
+		delete i.dataset[dsv];
+		i.src = appB+'/css/deleterc.svg';
+		box.style.display = 'none';
+	});
 }
 
 function setDelete (elm) {
@@ -59,22 +78,30 @@ function setDelete (elm) {
 		mmg_deleting = false;
 		elm.style.backgroundColor = 'revert';
 		let dels = document.querySelectorAll('[data-delm]');
-		console.log(dels);
+		//console.log(dels);
 		if (dels.length) {
-			let fns = [];
-			let dns = [];
-			dels.forEach(del => {
-				if (del.dataset.file) fns.push(del.dataset.file);
-				if (del.dataset.fold) dns.push(del.dataset.fold);
+
+			doAcDlg('<span class="danger">Last chance! Are you sure that you want to delete these items? This can not be undone.</span>', true, (evt) => {
+				if (evt.target.returnValue == 'okay') {
+
+					let fns = [];
+					let dns = [];
+					dels.forEach(del => {
+						if (del.dataset.file) fns.push(del.dataset.file);
+						if (del.dataset.fold) dns.push(del.dataset.fold);
+					});
+					fetch('admin.php?delm=1', {method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({dir:mmg_cdir,files:fns,folds:dns})})
+					.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
+					.then(data => {
+						//console.log(data);
+						window.location.reload(true);
+					})
+					.catch(err => alert('Failure: '+err));
+
+				} else cancelSelectAction('delm');
 			});
-			fetch('admin.php?delm=1', {method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({dir:mmg_cdir,files:fns,folds:dns})})
-			.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
-			.then(data => {
-				console.log(data);
-				window.location.reload(true);
-			})
-			.catch(err => alert('Failure: '+err));
-		}
+
+		} else cancelSelectAction('delm');
 		return;
 	}
 
@@ -87,7 +114,66 @@ function setDelete (elm) {
 		if (evt.target.returnValue != 'okay') return;
 		mmg_deleting = true;
 		elm.style.backgroundColor = '#F66';
-		const boxes = document.querySelectorAll('.delbox');
+		const boxes = document.querySelectorAll('.selbox');
+		boxes.forEach(box => {
+			box.style.display = 'block';
+		});
+	});
+}
+
+function setMove (elm) {
+	if (mmg_moving) {
+		mmg_moving = false;
+	//	elm.style.backgroundColor = 'revert';
+		let mels = document.querySelectorAll('[data-melm]');
+		//console.log(mels);
+		if (mels.length) {
+			fetch('admin.php?fsel=1', {method:'GET'})
+			.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
+			.then(data => {
+				//console.log(data);
+				doAcDlg(data, true, (evt) => {
+					elm.style.backgroundColor = 'revert';
+					if (evt.target.returnValue == 'okay') {
+						mmg_moving = true;
+						const m2d = evt.target.querySelector('select').value;
+						//console.log(m2d);
+
+						let fns = [];
+						let dns = [];
+						mels.forEach(mel => {
+							if (mel.dataset.file) fns.push(mel.dataset.file);
+							if (mel.dataset.fold) dns.push(mel.dataset.fold);
+						});
+						fetch('admin.php?melm=1', {method:'POST',headers: {'Content-Type': 'application/json'},body:JSON.stringify({sdir:mmg_cdir,ddir:m2d,files:fns,folds:dns})})
+						.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
+						.then(data => {
+							//console.log(data);
+							window.location.reload(true);
+						})
+						.catch(err => alert('Failure: '+err));
+
+					} else cancelSelectAction('melm');
+				});
+			})
+			.catch(err => alert('Failure: '+err));
+		} else {
+			cancelSelectAction('melm');
+			elm.style.backgroundColor = 'revert';
+		}
+		return;
+	}
+
+	if (pItems < 1) {
+		doAcDlg('There need to be some items to move');
+		return;
+	}
+
+	doAcDlg('Select items to move then click the "Move" button again', true, (evt) => {
+		if (evt.target.returnValue != 'okay') return;
+		mmg_moving = true;
+		elm.style.backgroundColor = '#FF6';
+		const boxes = document.querySelectorAll('.selbox');
 		boxes.forEach(box => {
 			box.style.display = 'block';
 		});
@@ -98,7 +184,7 @@ function doCfg (L=1) {
 	let dlg = document.getElementById('cfgDlg');
 	dlg.addEventListener('close', (e) => {
 		//if (mmg_win_reload) window.location.reload(true);
-		console.log(e,dlg.returnValue);
+		//console.log(e,dlg.returnValue);
 		//H5uClear();
 		Fancybox.close();
 	});
@@ -115,7 +201,7 @@ function doCfg (L=1) {
 }
 
 function saveCfg (evt,elm) {
-	console.log(evt,elm);
+	//console.log(evt,elm);
 	if (evt.submitter.className=='cfgAdv') {
 		evt.submitter.style.display = 'none';
 		doCfg(2);
@@ -125,14 +211,14 @@ function saveCfg (evt,elm) {
 	fetch('admin.php', {method:'POST',body:parms})
 	.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 	.then(data => {
-		console.log(data);
+		//console.log(data);
 		window.location.reload(true);
 	})
 	.catch(err => alert('Failure: '+err));
 }
 
 function showBgi (sel) {
-	console.log(sel.value);
+	//console.log(sel.value);
 	const bgi = sel.value;
 	Fancybox.close();
 	Fancybox.show([{src: `${appB}/css/bg_${bgi}.jpeg`}],{mainClass:'bgidsp'});
@@ -140,13 +226,13 @@ function showBgi (sel) {
 
 function delGalQ () {
 	doAcDlg('<span class="danger">Are you 100% sure that you want to completely delete this gallery?</span>', true, (rsp)=>{
-		console.log(rsp);
+		//console.log(rsp);
 		if (rsp.target.returnValue == 'okay') {
 			let parms = new URLSearchParams('kgal='+'XXXXX');
 			fetch('admin.php', {method:'POST',body:parms})
 			.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 			.then(data => {
-				console.log(data);
+				//console.log(data);
 				if (data) alert('Could not delete the gallery');
 				else window.location = appB;
 			})
@@ -169,12 +255,12 @@ function foldset (foldp) {
 }
 
 function saveFold (evt,elm) {
-	console.log(evt,elm);
+	//console.log(evt,elm);
 	let parms = new FormData(elm);
 	fetch('admin.php', {method:'POST',body:parms})
 	.then(resp => { if (!resp.ok) throw new Error(`HTTP ${resp.status}`); if (false && json) return resp.json(); else return resp.text() })
 	.then(data => {
-		console.log(data);
+		//console.log(data);
 		window.location.reload(true);
 	})
 	.catch(err => alert('Failure: '+err));
@@ -331,7 +417,7 @@ function $ae (elem, evnt, func) {
 	function ProgressBar (fileObj, sclass) {
 		let $ = this;
 		
-		$.show = (percent) => {	console.log(percent,$.pb);
+		$.show = (percent) => {	//console.log(percent,$.pb);
 			let p = 100 * percent;
 			$.pb.style.width = p + "%";
 			if (percent === 1) {
@@ -496,7 +582,7 @@ function $ae (elem, evnt, func) {
 				},
 			//upload successful
 			load: (e) => {
-				console.log(e);
+				//console.log(e);
 //				if ($.X.readyState < 4) return;
 				if ($.X.status>200 || $.X.responseText.length) {
 					$.pBar.msg($.X.responseText, $.X.status>200);
@@ -511,7 +597,7 @@ function $ae (elem, evnt, func) {
 				}
 				},
 			abrt: (e) => {
-				console.log(e);
+				//console.log(e);
 				$.pBar.msg('-- Aborted', true);
 				if ($.doChnk) {
 					$.upState = 'abrt';
@@ -522,7 +608,7 @@ function $ae (elem, evnt, func) {
 				},
 			//upload failure
 			fail: (e) => {
-				console.log(e);
+				//console.log(e);
 				$.pBar.msg($.X.responseText, true);
 				endup();
 				}

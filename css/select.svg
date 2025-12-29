@@ -1,6 +1,7 @@
-<?xml version="1.0" ?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-	<g id="_186_x-sm" data-name="186 x-sm">
-		<path style="fill:green" d="M7,20 L20,33 L33,7"/>
-	</g>
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <g id="Layer_1">
+    <path id="P1" style="stroke:#8ce83f;stroke-linecap:round;stroke-width:2;" d="M22.876,11.1441 C22.876,11.1441,14.9579,21.6332,14.9579,21.6332"/>
+    <path id="P2" style="stroke:#8ce83f;stroke-linecap:round;stroke-width:2;" d="M14.9579,21.6332 C14.9579,21.6332,11.124,17.2062,11.124,17.2062"/>
+  </g>
 </svg>

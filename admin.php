@@ -65,6 +65,12 @@ if (isset($_POST['kgal']) && $_POST['kgal']==$gbase) {
 	exit();
 }
 
+if (isset($_GET['fsel'])) {
+	$fdirs = ['<select><option value="">HOME</option>'];
+	foldHeir(IBASE, $fdirs, 1);
+	echo implode('', $fdirs).'</select>';
+}
+
 if (isset($_GET['delm'])) {
 	$pinput = file_get_contents('php://input');
 	$rvars = json_decode($pinput);
@@ -76,6 +82,53 @@ if (isset($_GET['delm'])) {
 	foreach ($rvars->folds as $dn) {
 		delTree($dir.$dn);
 	}
+}
+
+if (isset($_GET['melm'])) {
+	$pinput = file_get_contents('php://input');
+	$rvars = json_decode($pinput);
+
+	$sdir = IBASE.$rvars->sdir;
+	$ddir = IBASE.$rvars->ddir;	//				($rvars->ddir ? ($rvars->ddir.'/') : '');
+	// move the file items
+	// * may want to force thumb regen after files move
+	foreach ($rvars->files as $fn) {
+		moveFile($sdir.$fn, $ddir.$fn);
+	}
+	// move the folder items
+	foreach ($rvars->folds as $dn) {
+		moveFile($sdir.$dn, $ddir.$dn);
+	}
+}
+
+function foldHeir ($dir, &$dirs, $l)
+{
+	$files = array_diff(scandir($dir), array('.','..'));
+	foreach ($files as $file) {
+		if ($file[0]=='.') continue;
+		$fp = "$dir/$file";
+		if (is_dir($fp)) {
+			$d = ltrim(preg_replace('#^media#', '', $fp),'/');
+			if ($d) $d .= '/';
+			$dirs[] = '<option value="'.$d.'">'.str_repeat('&mdash;',$l).' '.$file.'</option>';
+			foldHeir($fp, $dirs, $l+1);
+		}
+	}
+}
+
+function moveFile ($from, $to)
+{
+	$fnp = pathinfo($to);
+	$base_name = $fnp['filename'];
+	$ext = isset($fnp['extension']) ? ('.'.$fnp['extension']) : '';
+	$uniq = '';
+	$nr = 0;
+
+	while (file_exists($fPath.$base_name.$uniq.$ext)) {
+		$uniq = '~'.$nr++;
+	}
+	$ffpnam = $fPath.$base_name.$uniq.$ext;
+	return rename($from, $to);
 }
 
 function delTree ($dir)

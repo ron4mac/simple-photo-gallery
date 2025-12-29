@@ -51,6 +51,7 @@ if ($isLogged) {
 <button class="newFbut" onclick="askNewF()">New Folder</button>
 <button onclick="askUpld()">Upload</button>
 <button onclick="setDelete(this)">Delete</button>
+<button onclick="setMove(this)">Move</button>
 <button onclick="doCfg()">Config</button>
 <i class="fa fa-lg fa-trash" onclick="delGalQ()"></i>
 </span>';
@@ -175,7 +176,7 @@ if ($dirsl) {
 	$content .= '<div class="folds">';
 	natsort($dirsl);
 	foreach ($dirsl as $adir) {
-		if ($isLogged) $content .= '<div><div class="delbox"><img src="'.$base.'/css/deleterc.svg" data-fold="'.$adir.'" onclick="delToggle(this)"></div>';
+		if ($isLogged) $content .= '<div><div class="selbox"><img src="'.$base.'/css/deleterc.svg" data-fold="'.$adir.'" onclick="selToggle(this)"></div>';
 		$content .= '<a href="'.$self.'?d='.urlencode($cdir.$adir).'"><div class="fold"><span>'.$adir.'</span>';
 		$content .= '<img src="'.$base.'/css/folder.svg" alt=""></div></a>';
 		if ($isLogged) $content .= '</div>';
@@ -188,7 +189,7 @@ if ($imgsl) {
 	foreach ($imgsl as $file=>$aimg) {
 		if (is_array($aimg)) {
 			$fn = isset($aimg[2]) ? ('<span class="fname">'.$aimg[2].'</span>') : '';
-			if ($isLogged) $content .= '<div><div class="delbox"><img src="'.$base.'/css/deleterc.svg" data-file="'.$file.'" onclick="delToggle(this)"></div>';
+			if ($isLogged) $content .= '<div><div class="selbox"><img src="'.$base.'/css/deleterc.svg" data-file="'.$file.'" onclick="selToggle(this)"></div>';
 			$content .= '<a data-fancybox="gallery" href="'.IBASE.$aimg[0].'"><img src="'.$base.'/css/img.png" data-echo="'.$aimg[1].'" />'.$fn.'</a>';
 			if ($isLogged) $content .= '</div>';
 		} else {

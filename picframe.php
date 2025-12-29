@@ -98,7 +98,7 @@ $hdinc = '
 </style>
 <script>
 function doUpload (evt) {
-	console.log(evt);
+	//console.log(evt);
 	document.forms.PicUp.elements.namedItem("fldp").value = evt.target.dataset.fld;
 	document.forms.PicUp.submit();
 }
