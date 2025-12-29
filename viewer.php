@@ -18,7 +18,7 @@ $acmds = '';
 $headScript = [];
 $phpmxu = 0;
 $updone = 'if (!errC) window.location.reload(true);';
-$fldsets = (object)['desc' => '','pubup' => 0,'picf' => 0];
+$fldsets = (object)['desc' => '','privt' => 0,'picf' => 0,'pubup' => 0];
 function parse_size ($size)
 {
 	$unit = preg_replace('/[^bkmgtpezy]/i', '', $size); // Remove the non-unit characters from the size.
@@ -116,6 +116,8 @@ if (isset($isPubUp)) {
 } else {
 	$nav .= $navH;
 }
+$nav .= '&nbsp;';
+if ($fldsets->privt) $nav .= ' <span class="fa fa-lock" aria-hidden="true"></span>';
 if (empty($isPubUp) && $isLogged) {
 	if ($fldsets->pubup) $nav .= ' <span class="fa fa-cloud-upload" aria-hidden="true"></span>';
 	if ($fldsets->picf) {
@@ -144,8 +146,15 @@ foreach ($files as $file) {
 	if ($file[0]=='.') continue;
 	$fpath = $dirts.$file;
 	if (is_dir(IBASE . $fpath)) {
-		$dirsl[] = $file;
-		continue;
+		if ($isLogged || !file_exists(IBASE . $fpath . '/.fold')) {
+			$dirsl[] = $file;
+			continue;
+		}
+		$attrs = json_decode(file_get_contents(IBASE . $fpath . '/.fold'));
+		if (empty($attrs->privt)) {
+			$dirsl[] = $file;
+			continue;
+		}
 	}
 	$iurl = '?f='.urlencode(/*'/'.*/$fpath);
 	$mtyp = substr(finfo_file($finfo,IBASE . $fpath),0,6);
@@ -176,7 +185,7 @@ if ($dirsl) {
 	$content .= '<div class="folds">';
 	natsort($dirsl);
 	foreach ($dirsl as $adir) {
-		if ($isLogged) $content .= '<div><div class="selbox"><img src="'.$base.'/css/deleterc.svg" data-fold="'.$adir.'" onclick="selToggle(this)"></div>';
+		if ($isLogged) $content .= '<div><div class="selbox"><img src="'.$base.'/css/clear.svg" data-fold="'.$adir.'" onclick="selToggle(this)"></div>';
 		$content .= '<a href="'.$self.'?d='.urlencode($cdir.$adir).'"><div class="fold"><span>'.$adir.'</span>';
 		$content .= '<img src="'.$base.'/css/folder.svg" alt=""></div></a>';
 		if ($isLogged) $content .= '</div>';
@@ -189,7 +198,7 @@ if ($imgsl) {
 	foreach ($imgsl as $file=>$aimg) {
 		if (is_array($aimg)) {
 			$fn = isset($aimg[2]) ? ('<span class="fname">'.$aimg[2].'</span>') : '';
-			if ($isLogged) $content .= '<div><div class="selbox"><img src="'.$base.'/css/deleterc.svg" data-file="'.$file.'" onclick="selToggle(this)"></div>';
+			if ($isLogged) $content .= '<div><div class="selbox"><img src="'.$base.'/css/clear.svg" data-file="'.$file.'" onclick="selToggle(this)"></div>';
 			$content .= '<a data-fancybox="gallery" href="'.IBASE.$aimg[0].'"><img src="'.$base.'/css/img.png" data-echo="'.$aimg[1].'" />'.$fn.'</a>';
 			if ($isLogged) $content .= '</div>';
 		} else {

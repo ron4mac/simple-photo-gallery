@@ -39,6 +39,9 @@ span.danger {
 #cfgDlg {
 	min-width: 320px;
 }
+#foldDlg i {
+	color: #CCC;
+}
 #cfgElms {
 	line-height: 1.5rem;
 }

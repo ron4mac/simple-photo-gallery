@@ -44,7 +44,7 @@ function newFreq (evt,elm) {
 }
 
 function selToggle (elm) {
-	let isrc = 'deleterc.svg';
+	let isrc = 'clear.svg';
 	if (mmg_moving) {
 		if (elm.dataset.melm) {
 			delete elm.dataset.melm;
@@ -68,7 +68,7 @@ function cancelSelectAction (dsv) {
 	boxes.forEach(box => {
 		let i = box.querySelector('img');
 		delete i.dataset[dsv];
-		i.src = appB+'/css/deleterc.svg';
+		i.src = appB+'/css/clear.svg';
 		box.style.display = 'none';
 	});
 }
