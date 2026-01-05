@@ -5,7 +5,7 @@ if (!defined('PFDW')) {
 	define('PFWX', 0);
 }
 if (!defined('IMGBKG')) {
-	define('IMGBKG', $droot.$base.'/css/bg_10.jpeg');
+	define('IMGBKG', $droot.$base.'/css/bg_12.jpeg');
 }
 
 class FrameImage
@@ -72,28 +72,48 @@ class FrameImage
 
 	function makeFimg ($simg)
 	{
+		if (!file_exists($simg)) {
+			header('HTTP/1.1 410 File missing');
+			exit;
+		}
 		list($w,$h,$t) = getimagesize($simg);
 		$src_img = $this->getimgRes($simg, $t);
 		// use the w/h from the possibly rotated image
 		$w = imagesx($src_img);
 		$h = imagesy($src_img);
-		list($nw,$nh,$x,$y,$ax,$ay) = $h>$w ? $this->inFrameRect($w,$h,PFDW,PFDH,PFWX) : array_pad($this->frameRect($w,$h,PFDW,PFDH), 6, 0);
+		list($dw,$dh,$dx,$dy,$sx,$sy) = $this->fitRect($w,$h,PFDW,PFDH,0);
 		$dst_img = $this->createImage(PFDW, PFDH, $h>$w ? IMGBKG : null);
-
-		if ($h>$w) {
-			$result = imagecopyresampled($dst_img, $src_img, $x, $y, $ax, $ay, $nw, $nh, $w, $h);
-			if (!$result) {
-				$result = @imagecopyresized($dst_img, $src_img, $x, $y, $ax, $ay, $nw, $nh, $w, $h);
-			}
-		} else {
-			$result = imagecopyresampled($dst_img, $src_img, 0, 0, $x, $y, PFDW, PFDH, $nw, $nh);
-			if (!$result) {
-				$result = @imagecopyresized($dst_img, $src_img, 0, 0, $x, $y, PFDW, PFDH, $nw, $nh);
-			}
+		//                                               dest left/top   src left/top   dest width/height   src width/height
+		$result = imagecopyresampled($dst_img, $src_img,    $dx, $dy,      $sx, $sy,        $dw, $dh,           $w, $h);
+		if (!$result) {
+			$result = @imagecopyresized($dst_img, $src_img, $dx, $dy, $sx, $sy, $dw, $dh, $w, $h);
 		}
 		imagejpeg($dst_img, null, 90);
 	}
 
+	// fit the full source image within the destination (no clipping)
+	private function fitRect ($sW, $sH, $dW, $dH)
+	{
+		// get the size ratio for each
+		$sar = $sW/$sH;
+		$dar = $dW/$dH;
+		// default to perfect fit
+		$fW = $dW;
+		$fH = $dH;
+		$x = 0;
+		$y = 0;
+
+		if ($dar>$sar) {	// destination is proportionately wider
+			$fW = round($fH*$sar);	// adjust dW to match source
+			$x = ($dW-$fW)>>1;	// adjust to split extra width between left and right
+		}
+		if ($sar>$dar) {	// source is proportionately wider
+			$fH = round($fW/$sar);	// adjust dH to match source
+			$y = ($dH-$fH)>>1;	// adjust to split extra height between top and bottom
+		}
+		return [$fW, $fH, $x, $y, 0, 0];
+	}
+/*
 	// size to completely fill the destination rect, keeping aspect with clipping
 	// returns the dimensions needed to fit and the offsets for centering
 	private function frameRect ($sW, $sH, $dW, $dH)
@@ -106,8 +126,9 @@ class FrameImage
 		$fH = $sH;
 		$x = 0;
 		$y = 0;
+		$ox = 0;
 	
-		if ($dar>$sar) {
+		if (false && $dar>$sar) {
 			$fH = round($sW/$dar);
 			$y = ($sH-$fH)>>1;
 		}
@@ -115,7 +136,7 @@ class FrameImage
 			$fW = round($sH*$dar);
 			$x = ($sW-$fW)>>1;
 		}
-		return [$fW, $fH, $x, $y];
+		return [$fW, $fH, $x, $y, $dW-$fW, 0];
 	}
 
 	// size to fit completely in rect .. portrait in landscape here
@@ -135,7 +156,7 @@ class FrameImage
 		$sy = $nhs>>1;
 		return [$nw, $nh, $dx, 0, 0, $sy];
 	}
-
+*/
 	private function getimgRes ($name, $type)
 	{
 		switch ($type) {
