@@ -113,50 +113,30 @@ class FrameImage
 		}
 		return [$fW, $fH, $x, $y, 0, 0];
 	}
-/*
-	// size to completely fill the destination rect, keeping aspect with clipping
-	// returns the dimensions needed to fit and the offsets for centering
-	private function frameRect ($sW, $sH, $dW, $dH)
+
+	// completely fill the destination with the source, clipping the source where necessary
+	private function fillRect ($sW, $sH, $dW, $dH)
 	{
 		// get the size ratio for each
 		$sar = $sW/$sH;
 		$dar = $dW/$dH;
 		// default to perfect fit
-		$fW = $sW;
-		$fH = $sH;
+		$fW = $dW;
+		$fH = $dH;
 		$x = 0;
 		$y = 0;
-		$ox = 0;
+
+		if ($dar>$sar) {	// destination is proportionately wider
+			$fH = round($fW/$sar);	// adjust dH to match source
+			$y = ($dH-$fH)>>1;	// adjust to clip extra height from top and bottom
+		}
+		if ($sar>$dar) {	// source is proportionately wider
+			$fW = round($fH*$sar);	// adjust dW to match source
+			$x = ($dW-$fW)>>1;	// adjust to clip extra width from left and right
+		}
+		return [$fW, $fH, $x, $y, 0, 0];
+	}
 	
-		if (false && $dar>$sar) {
-			$fH = round($sW/$dar);
-			$y = ($sH-$fH)>>1;
-		}
-		if ($sar>$dar) {
-			$fW = round($sH*$dar);
-			$x = ($sW-$fW)>>1;
-		}
-		return [$fW, $fH, $x, $y, $dW-$fW, 0];
-	}
-
-	// size to fit completely in rect .. portrait in landscape here
-	// $xP (0..1) amount of blank space on sides to expand into, clipping top and bottom
-	private function inFrameRect ($sW, $sH, $dW, $dH, $xP)
-	{
-		$sar = $sW/$sH;		//size width ratio
-		$fH = $dH;
-		$fW = round($sW*$dH/$sH);
-		$pwa = (int)(($dW-$fW)*$xP);
-		$pha = (int)($pwa/$sar);
-		$dx = ($dW-$fW-$pwa)>>1;
-
-		$nw = $fW+$pwa;
-		$nh = (int)(($fW+$pwa)/$sar);
-		$nhs = (int)($pha*$sH/$nh);
-		$sy = $nhs>>1;
-		return [$nw, $nh, $dx, 0, 0, $sy];
-	}
-*/
 	private function getimgRes ($name, $type)
 	{
 		switch ($type) {

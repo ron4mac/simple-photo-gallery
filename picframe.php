@@ -24,11 +24,11 @@ if (isset($_GET['act'])) {
 				require 'classes/frameimg.php';
 				$imgp = new FrameImage();
 				header('Content-Type: image/jpeg; charset=utf-8',true);
-				$imgp->makeFimg($gbases.IBASE.$_GET['img']);
+				$imgp->makeFimg($gbases.IBASE.$_GET['p']);
 				break;
 			}
 			header('Content-Type: image/jpeg; charset=utf-8',true);
-			readfile($gbases.IBASE.$_GET['img']);
+			readfile($gbases.IBASE.$_GET['p']);
 			break;
 		default:
 			throw new Exception('UNKNOWN ACTION');
@@ -49,7 +49,7 @@ function getPlayList ($fld, $thms=false, $pco=false)
 
 	$prot = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') ? 'https' : 'http';
 	$uri = strtok($_SERVER['REQUEST_URI'], '?');
-	$plk = $prot . "://" . $_SERVER['HTTP_HOST'] . $uri . '?act=getimg&img=';
+	$plk = $prot . "://" . $_SERVER['HTTP_HOST'] . $uri . '?act=getimg&p=';
 
 	$fp2d = $gbases.IBASE.$fld;
 	if (is_dir($fp2d) && ($handle = opendir($fp2d))) {
