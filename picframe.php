@@ -16,8 +16,8 @@ if (isset($_GET['act'])) {
 			if (isset($cfg->bgi)) {
 				define('IMGBKG', $droot.$base.'/css/bg_'.$cfg->bgi.'.jpeg');
 			}
-			if (isset($_GET['dim'])) {
-				list($iw,$ih) = preg_split('/[\.x]/', $_GET['dim']);
+			if (isset($_GET['ddim'])) {
+				list($iw,$ih) = preg_split('/[\.x]/', $_GET['ddim']);
 				define('PFDW', $iw);
 				define('PFDH', $ih);
 				define('PFWX', isset($cfg->pexp) ? $cfg->pexp/100 : 0);
@@ -63,7 +63,7 @@ function getPlayList ($fld, $thms=false, $pco=false)
 					if ($pco) {
 						$pics++;
 					} else {
-						$pics[] = $plk.urlencode($fld.$file).'&dim='.(isset($_GET['ddim']) ? $_GET['ddim'] : '1200.600');	//."\n";	//json_encode($fp2d.$file);
+						$pics[] = $plk.urlencode($fld.$file);		//.'&dim='.(isset($_GET['ddim']) ? $_GET['ddim'] : '1200.600');	//."\n";	//json_encode($fp2d.$file);
 					}
 				}
 			}

@@ -82,7 +82,7 @@ class FrameImage
 		$w = imagesx($src_img);
 		$h = imagesy($src_img);
 		list($dw,$dh,$dx,$dy,$sx,$sy) = $this->fitRect($w,$h,PFDW,PFDH,0);
-		$dst_img = $this->createImage(PFDW, PFDH, $h>$w ? IMGBKG : null);
+		$dst_img = $this->createImage(PFDW, PFDH, $h>$w ? IMGBKG : IMGBKG);			// null);
 		//                                               dest left/top   src left/top   dest width/height   src width/height
 		$result = imagecopyresampled($dst_img, $src_img,    $dx, $dy,      $sx, $sy,        $dw, $dh,           $w, $h);
 		if (!$result) {
